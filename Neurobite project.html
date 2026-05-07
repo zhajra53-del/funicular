@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroBite — Behavioral Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030712;
+  --bg2: #0a0f1e;
+  --bg3: #0d1525;
+  --panel: rgba(13,21,37,0.95);
+  --border: rgba(0,255,200,0.15);
+  --cyan: #00ffc8;
+  --cyan2: #00d4a8;
+  --purple: #8b5cf6;
+  --pink: #f472b6;
+  --yellow: #fbbf24;
+  --red: #ef4444;
+  --green: #22c55e;
+  --orange: #f97316;
+  --blue: #3b82f6;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --glow: 0 0 20px rgba(0,255,200,0.3);
+  --glow2: 0 0 40px rgba(139,92,246,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* GRID BG */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,200,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,200,0.03) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;z-index:0;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 0.8s ease;
+}
+.splash-logo{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2rem,8vw,5rem);
+  font-weight:900;
+  background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:pulseText 2s ease infinite;
+  letter-spacing:0.1em;
+}
+.splash-sub{
+  font-family:'Share Tech Mono',monospace;
+  color:var(--cyan2);font-size:1rem;margin-top:1rem;letter-spacing:0.3em;
+  animation:fadeIn 1.5s ease 0.5s both;
+}
+.splash-bar{
+  width:200px;height:3px;background:var(--bg3);
+  margin-top:2rem;border-radius:2px;overflow:hidden;
+}
+.splash-fill{
+  height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));
+  animation:fillBar 2s ease 0.3s forwards;
+  border-radius:2px;
+}
+@keyframes fillBar{to{width:100%}}
+@keyframes pulseText{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* LAYOUT */
+#app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* SIDEBAR */
+#sidebar{
+  width:240px;min-height:100vh;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;transition:transform 0.3s ease;
+  backdrop-filter:blur(20px);
+}
+.sidebar-logo{
+  padding:1.5rem 1.2rem 1rem;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo .brand{
+  font-family:'Orbitron',monospace;font-weight:900;font-size:1.3rem;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.sidebar-logo .tagline{font-size:0.65rem;color:var(--text2);letter-spacing:0.15em;margin-top:2px}
+
+.nav-section{padding:0.5rem 0}
+.nav-label{
+  font-size:0.6rem;letter-spacing:0.2em;color:var(--text2);
+  padding:0.5rem 1.2rem;text-transform:uppercase;
+}
+.nav-item{
+  display:flex;align-items:center;gap:0.7rem;
+  padding:0.65rem 1.2rem;cursor:pointer;
+  color:var(--text2);font-size:0.9rem;font-weight:600;
+  transition:all 0.2s ease;border-left:3px solid transparent;
+  letter-spacing:0.05em;
+}
+.nav-item:hover{color:var(--cyan);background:rgba(0,255,200,0.05);border-left-color:rgba(0,255,200,0.3)}
+.nav-item.active{color:var(--cyan);background:rgba(0,255,200,0.08);border-left-color:var(--cyan)}
+.nav-item .icon{font-size:1rem;width:1.2rem;text-align:center}
+.nav-item .badge{
+  margin-left:auto;font-size:0.6rem;padding:0.1rem 0.4rem;
+  background:var(--purple);color:white;border-radius:10px;font-family:'Share Tech Mono',monospace;
+}
+
+/* NEUROSCORE SIDEBAR */
+.neuro-score-mini{
+  margin:auto 1rem 1rem;
+  background:rgba(0,255,200,0.05);
+  border:1px solid var(--border);border-radius:12px;padding:1rem;
+}
+.nsmini-title{font-size:0.65rem;letter-spacing:0.2em;color:var(--text2);margin-bottom:0.5rem}
+.nsmini-val{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:700;color:var(--cyan)}
+.nsmini-bars{display:flex;flex-direction:column;gap:4px;margin-top:0.5rem}
+.nsmini-bar{display:flex;align-items:center;gap:0.4rem;font-size:0.65rem;color:var(--text2)}
+.nsmini-bar .bar-track{flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px}
+.nsmini-bar .bar-fill{height:100%;border-radius:2px;transition:width 0.5s ease}
+
+/* MAIN */
+#main{margin-left:240px;flex:1;padding:1.5rem;min-height:100vh}
+
+/* TOPBAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.5rem;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:0.8rem 1.2rem;backdrop-filter:blur(20px);
+}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.page-title{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:var(--cyan)}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.status-pill{
+  display:flex;align-items:center;gap:0.4rem;
+  font-size:0.7rem;letter-spacing:0.1em;color:var(--text2);
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  padding:0.3rem 0.7rem;border-radius:20px;
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* PANELS */
+.view{display:none;animation:fadeIn 0.4s ease}
+.view.active{display:block}
+
+/* CARDS */
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:1.2rem;backdrop-filter:blur(20px);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0.5;
+}
+.card-title{
+  font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;
+  color:var(--cyan);letter-spacing:0.1em;margin-bottom:1rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+
+/* STAT CARD */
+.stat-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:1rem;text-align:center;
+  transition:all 0.3s ease;cursor:pointer;
+}
+.stat-card:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:var(--glow)}
+.stat-val{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700}
+.stat-label{font-size:0.7rem;color:var(--text2);letter-spacing:0.1em;margin-top:0.2rem}
+.stat-trend{font-size:0.75rem;margin-top:0.3rem}
+
+/* METERS */
+.meter-container{margin:0.5rem 0}
+.meter-label{display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px}
+.meter-label span:first-child{color:var(--text2)}
+.meter-label span:last-child{font-family:'Share Tech Mono',monospace;font-weight:600}
+.meter-track{height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+.meter-fill{height:100%;border-radius:4px;transition:width 0.6s ease;position:relative}
+.meter-fill::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:4px;
+  background:rgba(255,255,255,0.6);filter:blur(2px);
+}
+
+/* CRAVING METER */
+.craving-meter{
+  background:var(--panel);border:1px solid rgba(239,68,68,0.3);
+  border-radius:14px;padding:1.2rem;
+  box-shadow:0 0 20px rgba(239,68,68,0.1);
+}
+.craving-value{
+  font-family:'Orbitron',monospace;font-size:3rem;font-weight:900;
+  text-align:center;
+  transition:all 0.3s ease;
+}
+.craving-track{
+  height:16px;background:rgba(255,255,255,0.06);
+  border-radius:8px;overflow:hidden;margin:0.8rem 0;
+}
+.craving-fill{
+  height:100%;border-radius:8px;
+  background:linear-gradient(90deg,var(--green),var(--yellow),var(--orange),var(--red));
+  transition:width 0.3s ease;
+  position:relative;
+}
+.craving-fill::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2));
+  animation:shimmer 1.5s infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* BRAIN HIJACK MODE */
+@keyframes hijack{
+  0%,100%{transform:translate(0,0) skew(0deg)}
+  20%{transform:translate(-2px,1px) skew(0.5deg)}
+  40%{transform:translate(2px,-1px) skew(-0.5deg)}
+  60%{transform:translate(-1px,2px) skew(1deg)}
+  80%{transform:translate(1px,-2px) skew(-1deg)}
+}
+.hijack-active{animation:hijack 0.1s infinite!important}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.6rem 1.2rem;border-radius:8px;
+  font-family:'Rajdhani',sans-serif;font-size:0.85rem;font-weight:700;
+  letter-spacing:0.08em;border:none;cursor:pointer;
+  transition:all 0.2s ease;text-transform:uppercase;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  color:var(--bg);box-shadow:0 0 20px rgba(0,255,200,0.3);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(0,255,200,0.5)}
+.btn-purple{
+  background:linear-gradient(135deg,var(--purple),#7c3aed);
+  color:white;box-shadow:0 0 20px rgba(139,92,246,0.3);
+}
+.btn-ghost{
+  background:transparent;border:1px solid var(--border);
+  color:var(--text2);
+}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-red{background:linear-gradient(135deg,var(--red),#dc2626);color:white}
+.btn-sm{padding:0.4rem 0.8rem;font-size:0.75rem}
+
+/* DUAL BRAIN */
+.dual-brain{
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+  margin:1rem 0;
+}
+.brain-side{
+  border-radius:12px;padding:1rem;text-align:center;
+  border:1px solid;transition:all 0.3s ease;cursor:pointer;
+}
+.rational-side{
+  border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.08);
+}
+.rational-side:hover,.rational-side.chosen{
+  border-color:var(--blue);background:rgba(59,130,246,0.15);
+  box-shadow:0 0 20px rgba(59,130,246,0.3);transform:scale(1.02);
+}
+.dopamine-side{
+  border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);
+}
+.dopamine-side:hover,.dopamine-side.chosen{
+  border-color:var(--red);background:rgba(239,68,68,0.15);
+  box-shadow:0 0 20px rgba(239,68,68,0.3);transform:scale(1.02);
+}
+.brain-icon{font-size:2rem;margin-bottom:0.5rem}
+.brain-label{font-family:'Orbitron',monospace;font-size:0.75rem;font-weight:700;letter-spacing:0.1em}
+.brain-desc{font-size:0.75rem;color:var(--text2);margin-top:0.3rem}
+
+/* SCENARIO CARD */
+.scenario-box{
+  background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);
+  border-radius:12px;padding:1.2rem;margin:1rem 0;
+}
+.scenario-title{font-family:'Orbitron',monospace;font-size:0.85rem;color:var(--purple);margin-bottom:0.5rem}
+.scenario-text{font-size:0.9rem;line-height:1.6;color:var(--text)}
+.choice-btn{
+  display:block;width:100%;text-align:left;
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:8px;padding:0.8rem 1rem;margin:0.5rem 0;
+  cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:0.9rem;
+  color:var(--text);transition:all 0.2s ease;letter-spacing:0.03em;
+}
+.choice-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,255,200,0.05)}
+.choice-btn.correct{border-color:var(--green);background:rgba(34,197,94,0.1);color:var(--green)}
+.choice-btn.wrong{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
+
+/* GUT VISUALIZATION */
+.gut-viz{
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  padding:1rem;flex-wrap:wrap;
+}
+.microbe{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  animation:float 3s ease-in-out infinite;
+  transition:all 0.5s ease;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* AVATAR EVOLUTION */
+.avatar-display{
+  text-align:center;padding:1.5rem;
+}
+.avatar-figure{
+  font-size:5rem;
+  display:block;margin:0 auto 1rem;
+  transition:all 0.5s ease;
+  filter:drop-shadow(0 0 20px rgba(0,255,200,0.4));
+}
+.health-rings{
+  display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;margin-top:0.5rem;
+}
+.health-ring{
+  width:50px;height:50px;border-radius:50%;
+  border:3px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;position:relative;
+  background:conic-gradient(var(--cyan) var(--p,0%), rgba(255,255,255,0.05) 0%);
+}
+
+/* QUIZ */
+.quiz-box{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:1.5rem;max-width:700px;margin:0 auto;
+}
+.quiz-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;
+}
+.quiz-progress{font-size:0.75rem;color:var(--text2);font-family:'Share Tech Mono',monospace}
+.quiz-timer{
+  font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:700;color:var(--yellow);
+  background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);
+  padding:0.3rem 0.8rem;border-radius:8px;
+}
+.quiz-q{font-size:1.1rem;font-weight:600;margin:1rem 0;line-height:1.5}
+.quiz-choices{display:flex;flex-direction:column;gap:0.5rem}
+.quiz-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-bottom:1.2rem;overflow:hidden}
+.quiz-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:2px;transition:width 0.1s linear}
+
+/* LEADERBOARD */
+.lb-row{
+  display:flex;align-items:center;gap:1rem;
+  padding:0.7rem 1rem;border-radius:8px;
+  border:1px solid var(--border);margin-bottom:0.4rem;
+  transition:all 0.2s ease;background:rgba(255,255,255,0.02);
+}
+.lb-row:hover{border-color:var(--cyan);background:rgba(0,255,200,0.03)}
+.lb-rank{
+  font-family:'Orbitron',monospace;font-weight:700;font-size:0.85rem;
+  width:30px;text-align:center;
+}
+.lb-avatar{font-size:1.5rem}
+.lb-name{font-weight:600;flex:1}
+.lb-score{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--cyan)}
+.lb-badge{font-size:0.7rem;padding:0.2rem 0.5rem;border-radius:10px;background:rgba(139,92,246,0.2);color:var(--purple)}
+
+/* SKILL TREE */
+.skill-tree{display:flex;flex-direction:column;gap:0.8rem}
+.skill-node{
+  display:flex;align-items:center;gap:1rem;
+  padding:0.8rem 1rem;border-radius:10px;
+  border:1px solid var(--border);transition:all 0.3s ease;cursor:pointer;
+  background:rgba(255,255,255,0.02);
+}
+.skill-node:hover,.skill-node.unlocked{
+  border-color:var(--cyan);background:rgba(0,255,200,0.05);
+}
+.skill-node.locked{opacity:0.5;cursor:not-allowed}
+.skill-icon{font-size:1.5rem}
+.skill-info{flex:1}
+.skill-name{font-weight:700;font-size:0.9rem}
+.skill-desc{font-size:0.75rem;color:var(--text2);margin-top:2px}
+.skill-cost{font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--yellow)}
+.skill-check{color:var(--cyan);font-size:1rem}
+
+/* TABS */
+.tabs{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.tab{
+  padding:0.4rem 1rem;border-radius:6px;font-size:0.8rem;font-weight:700;
+  cursor:pointer;border:1px solid var(--border);color:var(--text2);
+  transition:all 0.2s ease;letter-spacing:0.05em;
+}
+.tab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,255,200,0.08)}
+
+/* NOTIFICATION */
+.notif{
+  position:fixed;top:1rem;right:1rem;z-index:9999;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:0.8rem 1.2rem;
+  font-size:0.85rem;font-weight:600;
+  transform:translateX(200%);transition:transform 0.4s ease;
+  max-width:280px;backdrop-filter:blur(20px);
+  border-left:3px solid var(--cyan);
+}
+.notif.show{transform:translateX(0)}
+
+/* CYCLE DISPLAY */
+.cycle-phases{display:flex;gap:0.5rem;margin:0.8rem 0;flex-wrap:wrap}
+.phase-pill{
+  padding:0.4rem 0.8rem;border-radius:20px;font-size:0.75rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s ease;border:1px solid transparent;
+}
+.phase-pill.active{transform:scale(1.05)}
+
+/* ECONOMY */
+.coin-display{
+  display:flex;align-items:center;gap:0.5rem;
+  font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--yellow);
+  background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);
+  padding:0.4rem 0.8rem;border-radius:8px;
+}
+
+/* CHARTS */
+.chart-container{position:relative;height:120px;margin:0.5rem 0}
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:100%}
+.chart-bar{
+  flex:1;border-radius:3px 3px 0 0;min-height:4px;
+  transition:height 0.5s ease;
+}
+
+/* FEEDBACK BOX */
+.feedback-box{
+  background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);
+  border-radius:10px;padding:1rem;margin-top:1rem;
+  font-size:0.85rem;line-height:1.6;
+  display:none;
+}
+.feedback-box.show{display:block}
+.feedback-box.wrong-fb{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2)}
+
+/* HAMBURGER */
+#menu-toggle{
+  display:none;position:fixed;top:1rem;left:1rem;z-index:200;
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:0.5rem;cursor:pointer;font-size:1.2rem;backdrop-filter:blur(20px);
+}
+
+/* HABIT LOOP */
+.habit-loop{
+  display:flex;align-items:center;gap:0.3rem;justify-content:center;
+  flex-wrap:wrap;margin:1rem 0;
+}
+.habit-step{
+  padding:0.5rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:700;
+  border:1px solid var(--border);position:relative;
+  transition:all 0.3s ease;
+}
+.habit-arrow{color:var(--text2);font-size:0.8rem}
+.habit-step.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,255,200,0.08);box-shadow:var(--glow)}
+
+/* SHOP */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem}
+.shop-item{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:10px;padding:0.8rem;text-align:center;cursor:pointer;
+  transition:all 0.3s ease;
+}
+.shop-item:hover{border-color:var(--yellow);transform:translateY(-2px)}
+.shop-item .item-icon{font-size:2rem;display:block;margin-bottom:0.4rem}
+.shop-item .item-name{font-size:0.8rem;font-weight:600;margin-bottom:0.3rem}
+.shop-item .item-price{font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--yellow)}
+
+/* MISSION CARD */
+.mission-card{
+  display:flex;align-items:center;gap:1rem;
+  padding:0.8rem;border-radius:10px;border:1px solid var(--border);
+  margin-bottom:0.5rem;background:rgba(255,255,255,0.02);
+  transition:all 0.2s ease;
+}
+.mission-card:hover{border-color:rgba(139,92,246,0.4)}
+.mission-icon{font-size:1.5rem}
+.mission-info{flex:1}
+.mission-title{font-weight:700;font-size:0.85rem}
+.mission-desc{font-size:0.72rem;color:var(--text2)}
+.mission-reward{font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--yellow)}
+.mission-progress{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:4px}
+.mission-pbar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  #menu-toggle{display:block}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .grid-3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:500px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .dual-brain{grid-template-columns:1fr}
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ANIMATIONS */
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.slide-up{animation:slideUp 0.4s ease both}
+
+/* PARALLAX ORBS */
+.orb{
+  position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:0.15;
+  animation:orbFloat 8s ease-in-out infinite;
+}
+.orb1{width:400px;height:400px;background:var(--cyan);top:-100px;right:-100px;animation-delay:0s}
+.orb2{width:300px;height:300px;background:var(--purple);bottom:-100px;left:100px;animation-delay:3s}
+.orb3{width:200px;height:200px;background:var(--pink);top:50%;left:40%;animation-delay:1.5s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,20px)}}
+
+/* IMPACT COUNTER */
+.impact-counter{
+  font-family:'Orbitron',monospace;font-size:2.5rem;font-weight:900;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+</style>
+</head>
+<body>
+
+<!-- ORBS -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">NEUROBITE</div>
+  <div class="splash-sub">BEHAVIORAL INTELLIGENCE PLATFORM</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- MOBILE TOGGLE -->
+<div id="menu-toggle" onclick="toggleSidebar()">☰</div>
+
+<div id="app">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">NEUROBITE</div>
+    <div class="tagline">BEHAVIORAL INTELLIGENCE</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">CORE</div>
+    <div class="nav-item active" onclick="switchView('dashboard',this)"><span class="icon">⚡</span> Dashboard</div>
+    <div class="nav-item" onclick="switchView('simulation',this)"><span class="icon">🧠</span> Simulation <span class="badge">LIVE</span></div>
+    <div class="nav-item" onclick="switchView('quiz',this)"><span class="icon">🎯</span> NeuroQuiz</div>
+    <div class="nav-item" onclick="switchView('scenarios',this)"><span class="icon">🌍</span> Scenarios</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">SYSTEMS</div>
+    <div class="nav-item" onclick="switchView('gut',this)"><span class="icon">🦠</span> Gut Intelligence</div>
+    <div class="nav-item" onclick="switchView('hormones',this)"><span class="icon">🧬</span> Hormones & Bio</div>
+    <div class="nav-item" onclick="switchView('manipulation',this)"><span class="icon">🛍️</span> Manipulation Lab</div>
+    <div class="nav-item" onclick="switchView('psychology',this)"><span class="icon">🪞</span> Psychology</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">GROWTH</div>
+    <div class="nav-item" onclick="switchView('avatar',this)"><span class="icon">🔮</span> Future Self</div>
+    <div class="nav-item" onclick="switchView('skills',this)"><span class="icon">🌳</span> Skill Tree</div>
+    <div class="nav-item" onclick="switchView('social',this)"><span class="icon">🏆</span> Social Hub</div>
+    <div class="nav-item" onclick="switchView('shop',this)"><span class="icon">💰</span> NeuroShop</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">ANALYTICS</div>
+    <div class="nav-item" onclick="switchView('analytics',this)"><span class="icon">📊</span> Behavioral AI</div>
+  </div>
+  <div class="neuro-score-mini">
+    <div class="nsmini-title">NEUROSCORE™</div>
+    <div class="nsmini-val" id="ns-mini">78</div>
+    <div class="nsmini-bars">
+      <div class="nsmini-bar">🧠 <div class="bar-track"><div class="bar-fill" id="sb-brain" style="width:75%;background:var(--cyan)"></div></div></div>
+      <div class="nsmini-bar">🦠 <div class="bar-track"><div class="bar-fill" id="sb-gut" style="width:60%;background:var(--green)"></div></div></div>
+      <div class="nsmini-bar">⚡ <div class="bar-track"><div class="bar-fill" id="sb-dec" style="width:82%;background:var(--purple)"></div></div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="page-title" id="page-title">DASHBOARD</span>
+    </div>
+    <div class="topbar-right">
+      <div class="coin-display" id="coin-disp">🪙 <span id="coins">1250</span></div>
+      <div class="status-pill"><div class="status-dot"></div> AI ACTIVE</div>
+    </div>
+  </div>
+
+  <!-- ========== DASHBOARD ========== -->
+  <div class="view active" id="view-dashboard">
+    <div class="grid-4" style="margin-bottom:1rem">
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--cyan)" id="ds-neuro">78</div>
+        <div class="stat-label">NEUROSCORE</div>
+        <div class="stat-trend" style="color:var(--green)">▲ +5 today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--green)" id="ds-streak">12</div>
+        <div class="stat-label">DAY STREAK</div>
+        <div class="stat-trend" style="color:var(--yellow)">🔥 Best: 21</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--purple)" id="ds-decisions">247</div>
+        <div class="stat-label">DECISIONS MADE</div>
+        <div class="stat-trend" style="color:var(--green)">▲ 12 today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--yellow)" id="ds-coins">1250</div>
+        <div class="stat-label">NEUROCOINS</div>
+        <div class="stat-trend" style="color:var(--cyan)">⬆ Rank #42</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="card">
+        <div class="card-title">⚡ REAL-TIME STATUS</div>
+        <div class="craving-meter">
+          <div style="font-size:0.75rem;color:var(--text2);letter-spacing:0.15em;margin-bottom:0.3rem">CRAVING LEVEL</div>
+          <div class="craving-value" id="craving-val" style="color:var(--yellow)">42%</div>
+          <div class="craving-track"><div class="craving-fill" id="craving-fill" style="width:42%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--text2)">
+            <span>CONTROLLED</span><span>HIJACKED</span>
+          </div>
+        </div>
+        <div style="margin-top:1rem">
+          <div class="meter-container">
+            <div class="meter-label"><span>Dopamine Sensitivity</span><span style="color:var(--purple)" id="dop-val">68%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="dop-fill" style="width:68%;background:linear-gradient(90deg,var(--purple),var(--pink))"></div></div>
+          </div>
+          <div class="meter-container">
+            <div class="meter-label"><span>Cognitive Control</span><span style="color:var(--blue)" id="cog-val">75%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="cog-fill" style="width:75%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div>
+          </div>
+          <div class="meter-container">
+            <div class="meter-label"><span>Stress Level</span><span style="color:var(--orange)" id="stress-val">35%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="stress-fill" style="width:35%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="simulateCraving()">🍕 Trigger Craving</button>
+          <button class="btn btn-ghost btn-sm" onclick="meditate()">🧘 Meditate</button>
+          <button class="btn btn-red btn-sm" onclick="brainHijack()">⚠️ Brain Hijack</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔄 HABIT LOOP TRACKER</div>
+        <div class="habit-loop">
+          <div class="habit-step" id="hl-cue">CUE</div>
+          <div class="habit-arrow">→</div>
+          <div class="habit-step" id="hl-craving">CRAVING</div>
+          <div class="habit-arrow">→</div>
+          <div class="habit-step" id="hl-action">ACTION</div>
+          <div class="habit-arrow">→</div>
+          <div class="habit-step" id="hl-reward">REWARD</div>
+        </div>
+        <div id="habit-desc" style="font-size:0.82rem;color:var(--text2);padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:8px;line-height:1.6">
+          Monitor your behavior patterns in real-time. Each decision feeds the loop. Click "Trigger Craving" to observe the cycle.
+        </div>
+        <div style="margin-top:1rem">
+          <div class="meter-label" style="margin-bottom:4px"><span style="font-size:0.75rem;color:var(--text2)">Addiction Index</span><span id="ai-val" style="font-family:'Share Tech Mono',monospace;color:var(--red);font-size:0.75px"></span></div>
+          <div class="meter-label"><span style="font-size:0.75rem;color:var(--text2)">Addiction Index</span><span id="ai-val" style="font-family:'Share Tech Mono',monospace;color:var(--red);font-size:0.75rem">LOW</span></div>
+          <div class="meter-track"><div class="meter-fill" id="ai-fill" style="width:25%;background:linear-gradient(90deg,var(--yellow),var(--red))"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">📅 DAILY QUESTS</div>
+        <div class="mission-card">
+          <div class="mission-icon">🥗</div>
+          <div class="mission-info">
+            <div class="mission-title">Mindful Meal</div>
+            <div class="mission-desc">Make 3 conscious food choices</div>
+            <div class="mission-reward">+50 🪙</div>
+            <div class="mission-progress"><div class="mission-pbar" style="width:66%"></div></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="completeQuest(this,50)">2/3</button>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon">🧠</div>
+          <div class="mission-info">
+            <div class="mission-title">Quiz Master</div>
+            <div class="mission-desc">Answer 5 NeuroQuiz questions</div>
+            <div class="mission-reward">+75 🪙</div>
+            <div class="mission-progress"><div class="mission-pbar" style="width:40%"></div></div>
+          </div>
+          <button class="btn btn-purple btn-sm" onclick="switchView('quiz',null)">GO</button>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon">🎯</div>
+          <div class="mission-info">
+            <div class="mission-title">Bias Buster</div>
+            <div class="mission-desc">Identify 2 manipulation tactics</div>
+            <div class="mission-reward">+60 🪙</div>
+            <div class="mission-progress"><div class="mission-pbar" style="width:0%"></div></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="switchView('manipulation',null)">START</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📈 7-DAY NEUROSCORE</div>
+        <div class="chart-container">
+          <div class="mini-chart" id="week-chart"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--text2);margin-top:4px">
+          <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+        </div>
+        <div style="margin-top:1rem;font-size:0.8rem">
+          <div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text2)">Avg Score</span><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">74.3</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.3rem 0">
+            <span style="color:var(--text2)">Peak</span><span style="color:var(--green);font-family:'Share Tech Mono',monospace">82</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🧩 BEHAVIORAL DNA</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+          <div style="background:rgba(0,255,200,0.08);border:1px solid rgba(0,255,200,0.2);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-size:1.5rem">🎯</div>
+            <div style="font-size:0.7rem;color:var(--cyan);font-weight:700">RATIONAL</div>
+            <div style="font-size:0.65rem;color:var(--text2)">PRIMARY DRIVER</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-size:1.5rem">😤</div>
+            <div style="font-size:0.7rem;color:var(--red);font-weight:700">STRESS EATER</div>
+            <div style="font-size:0.65rem;color:var(--text2)">RISK PATTERN</div>
+          </div>
+          <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-size:1.5rem">🌙</div>
+            <div style="font-size:0.7rem;color:var(--purple);font-weight:700">NIGHT OWL</div>
+            <div style="font-size:0.65rem;color:var(--text2)">EATING PATTERN</div>
+          </div>
+          <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-size:1.5rem">📱</div>
+            <div style="font-size:0.7rem;color:var(--yellow);font-weight:700">DISTRACTED</div>
+            <div style="font-size:0.65rem;color:var(--text2)">EATING TYPE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SIMULATION ========== -->
+  <div class="view" id="view-simulation">
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="card">
+        <div class="card-title">🧠 DUAL BRAIN SYSTEM</div>
+        <div id="sim-scenario" class="scenario-box">
+          <div class="scenario-title">📍 SCENARIO LOADING...</div>
+          <div class="scenario-text" id="sim-scenario-text">Click "New Scenario" to begin your simulation.</div>
+        </div>
+        <div class="dual-brain">
+          <div class="brain-side rational-side" onclick="makeChoice('rational')" id="brain-rational">
+            <div class="brain-icon">🔵</div>
+            <div class="brain-label">RATIONAL BRAIN</div>
+            <div class="brain-desc" id="rational-action">Logic & Long-term health</div>
+          </div>
+          <div class="brain-side dopamine-side" onclick="makeChoice('dopamine')" id="brain-dopamine">
+            <div class="brain-icon">🔴</div>
+            <div class="brain-label">DOPAMINE BRAIN</div>
+            <div class="brain-desc" id="dopamine-action">Cravings & Instant reward</div>
+          </div>
+        </div>
+        <div class="feedback-box" id="sim-feedback"></div>
+        <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="newScenario()">🎲 New Scenario</button>
+          <button class="btn btn-ghost" onclick="replayScenario()">🪞 Parallel Reality</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚡ LIVE ENGINE STATUS</div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Dopamine Rush</span><span style="color:var(--pink)" id="sim-dop">50%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sim-dop-fill" style="width:50%;background:linear-gradient(90deg,var(--purple),var(--pink))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Willpower Reserve</span><span style="color:var(--blue)" id="sim-will">70%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sim-will-fill" style="width:70%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Stress Pressure</span><span style="color:var(--orange)" id="sim-stress">30%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sim-stress-fill" style="width:30%;background:linear-gradient(90deg,var(--yellow),var(--red))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Social Influence</span><span style="color:var(--cyan)" id="sim-social">45%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sim-social-fill" style="width:45%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div>
+        </div>
+        <div style="margin-top:1rem;padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-size:0.7rem;color:var(--text2);letter-spacing:0.1em;margin-bottom:0.3rem">INTERNAL DIALOGUE</div>
+          <div id="inner-dialogue" style="font-size:0.85rem;font-style:italic;color:var(--text)">
+            "Your rational mind is in control. Stay mindful."
+          </div>
+        </div>
+        <div style="margin-top:1rem">
+          <div style="font-size:0.7rem;color:var(--text2);letter-spacing:0.1em;margin-bottom:0.5rem">SIMULATION STATS</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.8rem">
+            <div>Rational Choices: <span style="color:var(--cyan);font-family:'Share Tech Mono',monospace" id="sim-rational-count">0</span></div>
+            <div>Dopamine Choices: <span style="color:var(--red);font-family:'Share Tech Mono',monospace" id="sim-dop-count">0</span></div>
+            <div>Scenarios Done: <span style="color:var(--purple);font-family:'Share Tech Mono',monospace" id="sim-count">0</span></div>
+            <div>Score: <span style="color:var(--yellow);font-family:'Share Tech Mono',monospace" id="sim-score">0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parallel Reality Mode -->
+    <div class="card" id="parallel-box" style="display:none">
+      <div class="card-title">🪞 PARALLEL REALITY COMPARISON</div>
+      <div class="grid-2">
+        <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:1rem">
+          <div style="color:var(--green);font-weight:700;margin-bottom:0.5rem">✅ RATIONAL PATH</div>
+          <div id="reality-a" style="font-size:0.85rem;line-height:1.6"></div>
+        </div>
+        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1rem">
+          <div style="color:var(--red);font-weight:700;margin-bottom:0.5rem">⚡ DOPAMINE PATH</div>
+          <div id="reality-b" style="font-size:0.85rem;line-height:1.6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== QUIZ ========== -->
+  <div class="view" id="view-quiz">
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <div class="quiz-progress" id="quiz-progress">Question 1 / 10</div>
+        <div class="quiz-timer" id="quiz-timer">30s</div>
+      </div>
+      <div class="quiz-bar"><div class="quiz-bar-fill" id="quiz-bar-fill" style="width:100%"></div></div>
+      <div id="quiz-category" style="font-size:0.7rem;letter-spacing:0.15em;color:var(--purple);margin-bottom:0.3rem">DOPAMINE SYSTEM</div>
+      <div class="quiz-q" id="quiz-question">What triggers the dopamine reward system most powerfully in food consumption?</div>
+      <div class="quiz-choices" id="quiz-choices"></div>
+      <div class="feedback-box" id="quiz-feedback"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="startQuiz()">▶ Start Quiz</button>
+      <button class="btn btn-ghost" onclick="skipQuestion()">⏭ Skip</button>
+    </div>
+    <div class="card" style="margin-top:1rem;max-width:700px;margin-left:auto;margin-right:auto">
+      <div class="card-title">🏆 QUIZ LEADERBOARD</div>
+      <div id="quiz-lb"></div>
+    </div>
+  </div>
+
+  <!-- ========== SCENARIOS ========== -->
+  <div class="view" id="view-scenarios">
+    <div class="grid-3" id="scenario-grid"></div>
+  </div>
+
+  <!-- ========== GUT INTELLIGENCE ========== -->
+  <div class="view" id="view-gut">
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="card">
+        <div class="card-title">🦠 MICROBIOME VISUALIZATION</div>
+        <div class="gut-viz" id="gut-viz"></div>
+        <div style="margin-top:1rem">
+          <div class="meter-container">
+            <div class="meter-label"><span>Gut Health Score</span><span style="color:var(--green)" id="gut-score">72%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="gut-score-fill" style="width:72%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
+          </div>
+          <div class="meter-container">
+            <div class="meter-label"><span>Mood (Gut-Brain Axis)</span><span style="color:var(--blue)" id="gut-mood">68%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="gut-mood-fill" style="width:68%;background:linear-gradient(90deg,var(--blue),var(--purple))"></div></div>
+          </div>
+          <div class="meter-container">
+            <div class="meter-label"><span>Cognitive Clarity</span><span style="color:var(--cyan)" id="gut-clarity">65%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="gut-clarity-fill" style="width:65%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div>
+          </div>
+          <div class="meter-container">
+            <div class="meter-label"><span>Energy Level</span><span style="color:var(--yellow)" id="gut-energy">58%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="gut-energy-fill" style="width:58%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧬 GUT-BRAIN AXIS CONTROL</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem">
+          <button class="btn btn-primary" onclick="feedGut('fiber')">🥦 Eat High-Fiber Food</button>
+          <button class="btn btn-ghost" onclick="feedGut('probiotic')">🥛 Take Probiotics</button>
+          <button class="btn btn-ghost" onclick="feedGut('sugar')">🍭 Eat Sugary Snack</button>
+          <button class="btn btn-red" onclick="feedGut('junk')">🍟 Eat Junk Food</button>
+        </div>
+        <div id="gut-feedback" style="padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.85rem;line-height:1.6;border:1px solid var(--border)">
+          Your gut microbiome affects serotonin production, cognitive clarity, and mood. Feed it wisely.
+        </div>
+        <div style="margin-top:1rem;padding:0.8rem;background:rgba(0,255,200,0.05);border-radius:8px;border:1px solid rgba(0,255,200,0.2)">
+          <div style="font-size:0.7rem;letter-spacing:0.15em;color:var(--cyan);margin-bottom:0.3rem">BRAIN FOG STATUS</div>
+          <div id="brain-fog-status" style="font-size:0.9rem;font-weight:700;color:var(--green)">✅ CLEAR COGNITION</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📚 GUT INTELLIGENCE FACTS</div>
+      <div class="grid-3" style="gap:0.8rem">
+        <div style="padding:1rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem">🧠</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--green);margin-bottom:0.3rem">Serotonin Factory</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5">95% of serotonin (your happiness chemical) is produced in your gut — not your brain.</div>
+        </div>
+        <div style="padding:1rem;background:rgba(0,255,200,0.08);border:1px solid rgba(0,255,200,0.2);border-radius:10px">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem">🦠</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--cyan);margin-bottom:0.3rem">Microbiome Army</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5">38 trillion microbes live in your gut and directly influence mood, cravings and cognition.</div>
+        </div>
+        <div style="padding:1rem;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:10px">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem">⚡</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--purple);margin-bottom:0.3rem">Vagus Nerve</div>
+          <div style="font-size:0.75rem;color:var(--text2);line-height:1.5">The vagus nerve is the superhighway connecting gut and brain — 80% of signals go gut→brain.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HORMONES ========== -->
+  <div class="view" id="view-hormones">
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title">🩸 MENSTRUAL CYCLE SIMULATOR</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+        <div style="font-size:0.8rem;color:var(--text2)">Cycle Simulation:</div>
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;cursor:pointer">
+          <input type="checkbox" id="cycle-enabled" onchange="toggleCycle()" checked style="accent-color:var(--pink)"> Enable (inclusive option)
+        </label>
+      </div>
+      <div id="cycle-content">
+        <div class="cycle-phases">
+          <div class="phase-pill active" id="phase-menstrual" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.5);color:var(--red)" onclick="selectPhase('menstrual')">🩸 Menstrual</div>
+          <div class="phase-pill" id="phase-follicular" style="background:rgba(34,197,94,0.08);border-color:var(--border);color:var(--text2)" onclick="selectPhase('follicular')">🌱 Follicular</div>
+          <div class="phase-pill" id="phase-ovulation" style="background:rgba(251,191,36,0.08);border-color:var(--border);color:var(--text2)" onclick="selectPhase('ovulation')">🌸 Ovulation</div>
+          <div class="phase-pill" id="phase-luteal" style="background:rgba(139,92,246,0.08);border-color:var(--border);color:var(--text2)" onclick="selectPhase('luteal')">🌕 Luteal</div>
+        </div>
+        <div id="phase-info" class="scenario-box" style="margin-top:1rem"></div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🧬 HORMONE LEVELS</div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Estrogen</span><span style="color:var(--pink)" id="h-estrogen">60%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="h-estrogen-fill" style="width:60%;background:linear-gradient(90deg,var(--pink),#ec4899)"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Progesterone</span><span style="color:var(--purple)" id="h-prog">40%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="h-prog-fill" style="width:40%;background:linear-gradient(90deg,var(--purple),#7c3aed)"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Cortisol (Stress)</span><span style="color:var(--orange)" id="h-cortisol">45%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="h-cortisol-fill" style="width:45%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Insulin Sensitivity</span><span style="color:var(--green)" id="h-insulin">70%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="h-insulin-fill" style="width:70%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Leptin (Satiety)</span><span style="color:var(--blue)" id="h-leptin">55%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="h-leptin-fill" style="width:55%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎯 LIFESTYLE PROFILE</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem">
+          <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.3rem">Select Your Profile:</div>
+          <button class="btn btn-ghost" onclick="setProfile('student',this)">📚 Student</button>
+          <button class="btn btn-ghost" onclick="setProfile('athlete',this)">🏋️ Athlete</button>
+          <button class="btn btn-ghost" onclick="setProfile('professional',this)">💼 Working Professional</button>
+          <button class="btn btn-ghost" onclick="setProfile('sedentary',this)">🛋️ Sedentary</button>
+          <button class="btn btn-ghost" onclick="setProfile('optimizer',this)">🎯 Health Optimizer</button>
+        </div>
+        <div id="profile-info" style="margin-top:1rem;padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.82rem;line-height:1.6;border:1px solid var(--border)">
+          Select a lifestyle profile to see personalized behavioral patterns and nutritional needs.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MANIPULATION LAB ========== -->
+  <div class="view" id="view-manipulation">
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title">🛒 SUPERMARKET PSYCHOLOGY SIMULATOR</div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchManipTab('ads',this)">📺 Ads</div>
+        <div class="tab" onclick="switchManipTab('labels',this)">🏷️ Labels</div>
+        <div class="tab" onclick="switchManipTab('biases',this)">🧠 Biases</div>
+        <div class="tab" onclick="switchManipTab('placement',this)">🛒 Store Layout</div>
+      </div>
+      <div id="manip-content"></div>
+    </div>
+  </div>
+
+  <!-- ========== PSYCHOLOGY ========== -->
+  <div class="view" id="view-psychology">
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="card">
+        <div class="card-title">😤 STRESS → EATING SIMULATOR</div>
+        <div style="margin-bottom:1rem">
+          <div class="meter-label"><span style="font-size:0.8rem;color:var(--text2)">Stress Level</span><span id="psych-stress" style="font-family:'Share Tech Mono',monospace;color:var(--orange)">35%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="psych-stress-fill" style="width:35%;background:linear-gradient(90deg,var(--yellow),var(--red))"></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1rem">
+          <button class="btn btn-ghost" onclick="addStressor('exam')">📝 Exam Pressure</button>
+          <button class="btn btn-ghost" onclick="addStressor('work')">💼 Work Deadline</button>
+          <button class="btn btn-ghost" onclick="addStressor('social')">😰 Social Anxiety</button>
+          <button class="btn btn-ghost" onclick="addStressor('sleep')">😴 Sleep Deprivation</button>
+          <button class="btn btn-primary" onclick="releaseStress()">🧘 Release Stress</button>
+        </div>
+        <div id="stress-eating-result" style="padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.82rem;line-height:1.6;border:1px solid var(--border)">
+          Add stressors to observe how they trigger emotional eating behaviors.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🪞 SELF-REFLECTION ENGINE</div>
+        <div id="reflection-cards" style="display:flex;flex-direction:column;gap:0.5rem"></div>
+        <button class="btn btn-purple" style="margin-top:1rem;width:100%" onclick="generateReflection()">🔍 Analyze My Behavior</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎭 BIAS DETECTION SYSTEM</div>
+      <div class="grid-3" id="bias-cards"></div>
+    </div>
+  </div>
+
+  <!-- ========== AVATAR / FUTURE SELF ========== -->
+  <div class="view" id="view-avatar">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🔮 FUTURE SELF SIMULATOR</div>
+        <div class="avatar-display">
+          <span class="avatar-figure" id="avatar-emoji">🧑</span>
+          <div style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--cyan)" id="avatar-state">BALANCED SELF</div>
+          <div style="font-size:0.8rem;color:var(--text2);margin-top:0.3rem" id="avatar-desc">Keep making conscious decisions to evolve your future self.</div>
+          <div class="health-rings">
+            <div class="health-ring" style="--p:75%" title="Brain Health">🧠</div>
+            <div class="health-ring" style="--p:60%" title="Gut Health">🦠</div>
+            <div class="health-ring" style="--p:82%" title="Energy">⚡</div>
+            <div class="health-ring" style="--p:70%" title="Mood">😊</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="evolveAvatar('good')">✅ Make Good Choice</button>
+          <button class="btn btn-red" onclick="evolveAvatar('bad')">❌ Give In To Cravings</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 EVOLUTION TIMELINE</div>
+        <div id="timeline" style="display:flex;flex-direction:column;gap:0.5rem;max-height:400px;overflow-y:auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SKILL TREE ========== -->
+  <div class="view" id="view-skills">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🌳 COGNITIVE SKILL TREE</div>
+        <div class="skill-tree" id="skill-tree"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📈 YOUR PROGRESS</div>
+        <div style="text-align:center;padding:1rem">
+          <div class="impact-counter" id="skill-points">850</div>
+          <div style="font-size:0.75rem;color:var(--text2);letter-spacing:0.15em;margin-top:0.3rem">SKILL POINTS AVAILABLE</div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Impulse Resistance</span><span style="color:var(--cyan)" id="sk-impulse">40%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sk-impulse-fill" style="width:40%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Awareness</span><span style="color:var(--green)" id="sk-awareness">55%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sk-awareness-fill" style="width:55%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Decision Intelligence</span><span style="color:var(--purple)" id="sk-decision">35%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sk-decision-fill" style="width:35%;background:linear-gradient(90deg,var(--purple),var(--pink))"></div></div>
+        </div>
+        <div class="meter-container">
+          <div class="meter-label"><span>Emotional Regulation</span><span style="color:var(--yellow)" id="sk-emotion">60%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="sk-emotion-fill" style="width:60%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SOCIAL HUB ========== -->
+  <div class="view" id="view-social">
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="card">
+        <div class="card-title">🏆 GLOBAL LEADERBOARD</div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchLBTab('global',this)">Global</div>
+          <div class="tab" onclick="switchLBTab('weekly',this)">Weekly</div>
+          <div class="tab" onclick="switchLBTab('friends',this)">Friends</div>
+        </div>
+        <div id="leaderboard-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🤝 GUILDS & CLANS</div>
+        <div id="guilds-list"></div>
+        <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="joinGuild()">⚔️ Create/Join Guild</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏅 ACHIEVEMENT SYSTEM</div>
+      <div class="grid-4" id="achievements-grid"></div>
+    </div>
+  </div>
+
+  <!-- ========== SHOP ========== -->
+  <div class="view" id="view-shop">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem">
+      <div style="font-size:0.85rem;color:var(--text2)">Spend your NeuroCoins to unlock powerful abilities and customizations</div>
+      <div class="coin-display">🪙 <span id="shop-coins">1250</span></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchShopTab('abilities',this)">⚡ Abilities</div>
+      <div class="tab" onclick="switchShopTab('skins',this)">🎨 Skins</div>
+      <div class="tab" onclick="switchShopTab('scenarios',this)">🌍 Scenarios</div>
+    </div>
+    <div class="shop-grid" id="shop-grid"></div>
+  </div>
+
+  <!-- ========== ANALYTICS ========== -->
+  <div class="view" id="view-analytics">
+    <div class="grid-4" style="margin-bottom:1rem">
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--cyan)">87%</div>
+        <div class="stat-label">RATIONAL RATE</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--red)">13%</div>
+        <div class="stat-label">IMPULSIVE RATE</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--green)">LOW</div>
+        <div class="stat-label">RELAPSE RISK</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--purple)">RISING</div>
+        <div class="stat-label">TRAJECTORY</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🤖 PREDICTIVE BEHAVIOR AI</div>
+        <div id="ai-predictions" style="display:flex;flex-direction:column;gap:0.5rem"></div>
+        <button class="btn btn-purple" style="margin-top:1rem;width:100%" onclick="runAIAnalysis()">🔍 Run AI Analysis</button>
+      </div>
+      <div class="card">
+        <div class="card-title">⚡ MICRO-INTERVENTIONS</div>
+        <div id="interventions" style="display:flex;flex-direction:column;gap:0.5rem"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <div class="card-title">📊 BEHAVIORAL PATTERN DASHBOARD</div>
+      <div class="grid-3">
+        <div style="text-align:center;padding:1rem;background:rgba(0,255,200,0.05);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:2rem;margin-bottom:0.5rem">🧠</div>
+          <div style="font-family:'Orbitron',monospace;font-size:1.4rem;color:var(--cyan)">75</div>
+          <div style="font-size:0.7rem;color:var(--text2);letter-spacing:0.1em">BRAIN HEALTH</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:rgba(34,197,94,0.05);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:2rem;margin-bottom:0.5rem">🦠</div>
+          <div style="font-family:'Orbitron',monospace;font-size:1.4rem;color:var(--green)">72</div>
+          <div style="font-size:0.7rem;color:var(--text2);letter-spacing:0.1em">GUT HEALTH</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:rgba(139,92,246,0.05);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:2rem;margin-bottom:0.5rem">⚡</div>
+          <div style="font-family:'Orbitron',monospace;font-size:1.4rem;color:var(--purple)">82</div>
+          <div style="font-size:0.7rem;color:var(--text2);letter-spacing:0.1em">DECISION QUALITY</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+// ======================== STATE ========================
+const state = {
+  neuroScore: 78, streak: 12, decisions: 247, coins: 1250,
+  craving: 42, dopamine: 68, cognitive: 75, stress: 35,
+  gutScore: 72, gutMood: 68, gutClarity: 65, gutEnergy: 58,
+  simRational: 0, simDopamine: 0, simCount: 0, simScore: 0,
+  simWillpower: 70, simDopRush: 50, simStress: 30, simSocial: 45,
+  addictionIndex: 25, quizScore: 0, quizQ: 0, quizTimer: 30,
+  avatarGoodChoices: 0, avatarBadChoices: 0,
+  skillPoints: 850,
+  profile: null, cyclePhase: 'menstrual',
+  currentScenario: null, lastScenarioChoice: null,
+  hijackActive: false, timerInterval: null
+};
+
+// ======================== SPLASH ========================
+setTimeout(()=>{
+  document.getElementById('splash').style.opacity='0';
+  setTimeout(()=>{document.getElementById('splash').style.display='none'},800);
+},2500);
+
+// ======================== NAV ========================
+function switchView(view, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if(el)el.classList.add('active');
+  else document.querySelectorAll('.nav-item').forEach(n=>{if(n.textContent.trim().startsWith(viewLabel(view)))n.classList.add('active')});
+  const titles={dashboard:'DASHBOARD',simulation:'SIMULATION ENGINE',quiz:'NEUROQUIZ',scenarios:'SCENARIO ENGINE',gut:'GUT INTELLIGENCE',hormones:'HORMONES & BIOLOGY',manipulation:'MANIPULATION LAB',psychology:'PSYCHOLOGY ENGINE',avatar:'FUTURE SELF',skills:'SKILL TREE',social:'SOCIAL HUB',shop:'NEUROSHOP',analytics:'BEHAVIORAL AI'};
+  document.getElementById('page-title').textContent=titles[view]||view.toUpperCase();
+  if(document.getElementById('sidebar').classList.contains('open'))toggleSidebar();
+}
+function viewLabel(v){const m={dashboard:'Dashboard',simulation:'Simulation',quiz:'NeuroQuiz',scenarios:'Scenarios',gut:'Gut',hormones:'Hormones',manipulation:'Manipulation',psychology:'Psychology',avatar:'Future',skills:'Skill',social:'Social',shop:'NeuroShop',analytics:'Behavioral'};return m[v]||''}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+
+// ======================== NOTIFY ========================
+function notify(msg,type='info'){
+  const n=document.getElementById('notif');
+  const colors={info:'var(--cyan)',success:'var(--green)',warning:'var(--yellow)',error:'var(--red)'};
+  n.style.borderLeftColor=colors[type]||colors.info;
+  n.textContent=msg;n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),3000);
+}
+
+// ======================== COINS ========================
+function addCoins(amt){
+  state.coins+=amt;
+  document.getElementById('coins').textContent=state.coins;
+  document.getElementById('ds-coins').textContent=state.coins;
+  document.getElementById('shop-coins').textContent=state.coins;
+  if(amt>0)notify(`+${amt} NeuroCoins earned! 🪙`,'success');
+}
+
+// ======================== CRAVING / BRAIN SYSTEMS ========================
+function updateMeter(id,val,display){
+  const el=document.getElementById(id+'-fill');
+  if(el)el.style.width=val+'%';
+  const dEl=document.getElementById(id+'-val')||document.getElementById(id);
+  if(dEl&&display!==undefined)dEl.textContent=(display||val+'%');
+}
+
+function simulateCraving(){
+  state.craving=Math.min(100,state.craving+15);
+  state.dopamine=Math.min(100,state.dopamine+10);
+  document.getElementById('craving-val').textContent=state.craving+'%';
+  document.getElementById('craving-fill').style.width=state.craving+'%';
+  updateMeter('dop',state.dopamine);
+  activateHabitLoop('cue');
+  setTimeout(()=>activateHabitLoop('craving'),800);
+  document.getElementById('habit-desc').textContent='🔴 CUE detected → Dopamine spike → Craving triggered! Your brain is signaling for reward.';
+  if(state.craving>70){notify('⚠️ High craving detected! Rational control weakening.','warning')}
+  const cv=document.getElementById('craving-val');
+  cv.style.color=state.craving>70?'var(--red)':state.craving>40?'var(--orange)':'var(--yellow)';
+}
+
+function meditate(){
+  state.craving=Math.max(0,state.craving-20);
+  state.stress=Math.max(0,state.stress-15);
+  state.cognitive=Math.min(100,state.cognitive+10);
+  document.getElementById('craving-val').textContent=state.craving+'%';
+  document.getElementById('craving-fill').style.width=state.craving+'%';
+  updateMeter('dop',state.dopamine);
+  updateMeter('cog',state.cognitive);
+  updateMeter('stress',state.stress);
+  activateHabitLoop(null);
+  document.getElementById('habit-desc').textContent='🧘 Mindfulness activated. Cravings reduced. Prefrontal cortex re-engaged.';
+  notify('Mindfulness activated! Cravings reduced.','success');
+  addCoins(10);
+}
+
+function brainHijack(){
+  if(state.craving<60){notify('Craving must be >60% for Brain Hijack!','warning');return;}
+  state.hijackActive=true;
+  document.body.classList.add('hijack-active');
+  notify('⚠️ BRAIN HIJACK MODE! Dopamine flooding your system!','error');
+  document.getElementById('habit-desc').textContent='🔴 BRAIN HIJACK: Prefrontal cortex offline. Impulse control compromised. Dopamine is overriding rational thought!';
+  updateMeter('dop',Math.min(100,state.dopamine+30));
+  setTimeout(()=>{
+    document.body.classList.remove('hijack-active');
+    state.hijackActive=false;
+    notify('Brain Hijack ended. Control restored.','info');
+  },3000);
+}
+
+function activateHabitLoop(step){
+  const steps=['cue','craving','action','reward'];
+  steps.forEach(s=>{
+    const el=document.getElementById('hl-'+s);
+    if(el)el.classList.remove('active');
+  });
+  if(step){
+    const idx=steps.indexOf(step);
+    let i=0;
+    const anim=setInterval(()=>{
+      if(i>idx){clearInterval(anim);return;}
+      const el=document.getElementById('hl-'+steps[i]);
+      if(el)el.classList.add('active');
+      i++;
+    },600);
+  }
+}
+
+// ======================== SCENARIOS ========================
+const SCENARIOS=[
+  {title:'🛒 Supermarket Showdown',text:'You\'re at the supermarket checkout. Eye-level candy bars are 30% off with a bold "LIMITED OFFER" sign. You\'re hungry. The rational choice is to stick to your list. The dopamine brain wants the chocolate NOW.',rational:{action:'Walk past checkout snacks',desc:'Stick to shopping list. Save money & calories.',effect:{coins:30,cognitive:+5,stress:-5}},dopamine:{action:'Grab the candy bar',desc:'Instant pleasure, sugar crash in 30 mins, guilt, and empty wallet.',effect:{coins:-10,craving:+15,gut:-5}}},
+  {title:'📝 Exam Stress Eating',text:'It\'s midnight before a major exam. You\'ve been studying for 6 hours. Stress is high. The vending machine down the hall has chips and cola. Your rational brain knows sleep matters more than junk food.',rational:{action:'Drink water, go to sleep',desc:'Sleep consolidates memory. You\'ll perform 40% better tomorrow.',effect:{coins:20,cognitive:+10,stress:-10}},dopamine:{action:'Raid the vending machine',desc:'Sugar spike, then crash. Disrupted sleep. Worse exam performance.',effect:{craving:+10,gut:-8,stress:+5}}},
+  {title:'🎉 Social Gathering Pressure',text:'Friends are offering you another slice of cake. "Come on, just one more!" Social pressure is intense. Saying no feels awkward, but your body signals fullness.',rational:{action:'Politely decline with confidence',desc:'Social skills + body awareness. You feel proud afterward.',effect:{coins:25,cognitive:+8,craving:-10}},dopamine:{action:'Give in to peer pressure',desc:'Short-term social comfort. Long-term: ignored your body\'s signals.',effect:{craving:+8,stress:+5,gut:-5}}},
+  {title:'🌙 Late Night Craving',text:'It\'s 11 PM. You\'re watching TV and feel the urge to snack even though you had a full dinner. The kitchen is calling. Boredom and habit are driving this.',rational:{action:'Drink herbal tea, go to bed',desc:'Distinguish hunger from boredom. Sleep better, wake feeling great.',effect:{coins:30,gutScore:+5,craving:-15}},dopamine:{action:'Snack mindlessly',desc:'Distracted eating. Extra 400 calories you won\'t remember eating.',effect:{gut:-10,craving:+5,stress:+3}}},
+  {title:'💼 Work Deadline Hunger',text:'You\'re deep in a project with a 2-hour deadline. Real hunger hits. Fast food is 2 minutes away. A healthy meal requires 15 minutes to prepare.',rational:{action:'Prepare quick healthy meal',desc:'Better energy for 4+ hours. Brain performs optimally. Worth the 15 mins.',effect:{coins:20,cognitive:+12,gutScore:+5}},dopamine:{action:'Order fast food',desc:'Quick fix but energy crash hits in 90 minutes — right when you need focus most.',effect:{gut:-8,cognitive:-5,coins:-15}}}
+];
+
+let scenarioIdx=0;
+function newScenario(){
+  const s=SCENARIOS[scenarioIdx%SCENARIOS.length];
+  scenarioIdx++;
+  state.currentScenario=s;
+  state.lastScenarioChoice=null;
+  document.getElementById('sim-scenario').querySelector('.scenario-title').textContent=s.title;
+  document.getElementById('sim-scenario-text').textContent=s.text;
+  document.getElementById('rational-action').textContent=s.rational.action;
+  document.getElementById('dopamine-action').textContent=s.dopamine.action;
+  document.getElementById('sim-feedback').classList.remove('show','wrong-fb');
+  document.getElementById('brain-rational').classList.remove('chosen');
+  document.getElementById('brain-dopamine').classList.remove('chosen');
+  document.getElementById('parallel-box').style.display='none';
+  state.simCount++;
+  document.getElementById('sim-count').textContent=state.simCount;
+  // randomize engine values
+  state.simDopRush=30+Math.floor(Math.random()*40);
+  state.simStress=20+Math.floor(Math.random()*50);
+  state.simSocial=20+Math.floor(Math.random()*60);
+  document.getElementById('sim-dop').textContent=state.simDopRush+'%';
+  document.getElementById('sim-dop-fill').style.width=state.simDopRush+'%';
+  document.getElementById('sim-stress').textContent=state.simStress+'%';
+  document.getElementById('sim-stress-fill').style.width=state.simStress+'%';
+  document.getElementById('sim-social').textContent=state.simSocial+'%';
+  document.getElementById('sim-social-fill').style.width=state.simSocial+'%';
+  const dialogues=['Your rational mind can override the craving. Focus on long-term benefits.','Dopamine is spiking. Take a breath before deciding.','Social pressure detected. Remember: your choices, your body.','Stress is high. Don\'t let emotions drive your food choices.'];
+  document.getElementById('inner-dialogue').textContent='"'+dialogues[Math.floor(Math.random()*dialogues.length)]+'"';
+  notify('New scenario loaded: '+s.title,'info');
+}
+
+function makeChoice(type){
+  if(!state.currentScenario){notify('Load a scenario first!','warning');return;}
+  const s=state.currentScenario;
+  const choice=type==='rational'?s.rational:s.dopamine;
+  state.lastScenarioChoice=type;
+  document.getElementById('brain-'+type).classList.add('chosen');
+  const fb=document.getElementById('sim-feedback');
+  fb.classList.add('show');
+  if(type!=='rational')fb.classList.add('wrong-fb');
+  fb.innerHTML=`<strong>${type==='rational'?'✅ Great Choice!':'⚡ Dopamine Wins!'}</strong><br>${choice.desc}`;
+  // apply effects
+  const e=choice.effect;
+  if(e.coins)addCoins(e.coins);
+  if(e.cognitive){state.cognitive=Math.max(0,Math.min(100,state.cognitive+(e.cognitive||0)));updateMeter('cog',state.cognitive);}
+  if(e.gut){state.gutScore=Math.max(0,Math.min(100,state.gutScore+(e.gut||0)));updateMeter('gut-score',state.gutScore,state.gutScore+'%');}
+  if(e.craving){state.craving=Math.max(0,Math.min(100,state.craving+(e.craving||0)));document.getElementById('craving-val').textContent=state.craving+'%';document.getElementById('craving-fill').style.width=state.craving+'%';}
+  if(type==='rational'){state.simRational++;state.simScore+=50;state.simWillpower=Math.min(100,state.simWillpower+5);}
+  else{state.simDopamine++;state.simScore+=10;state.simWillpower=Math.max(0,state.simWillpower-10);state.addictionIndex=Math.min(100,state.addictionIndex+5);}
+  document.getElementById('sim-rational-count').textContent=state.simRational;
+  document.getElementById('sim-dop-count').textContent=state.simDopamine;
+  document.getElementById('sim-score').textContent=state.simScore;
+  document.getElementById('sim-will').textContent=state.simWillpower+'%';
+  document.getElementById('sim-will-fill').style.width=state.simWillpower+'%';
+  document.getElementById('ai-fill').style.width=state.addictionIndex+'%';
+  document.getElementById('ai-val').textContent=state.addictionIndex>60?'HIGH':state.addictionIndex>30?'MODERATE':'LOW';
+  state.decisions++;
+  document.getElementById('ds-decisions').textContent=state.decisions;
+}
+
+function replayScenario(){
+  if(!state.currentScenario){notify('Load a scenario first!','warning');return;}
+  const s=state.currentScenario;
+  const box=document.getElementById('parallel-box');
+  box.style.display='block';
+  document.getElementById('reality-a').innerHTML=`<strong>${s.rational.action}</strong><br>${s.rational.desc}<br><br>Long-term: Better energy, improved gut health, stronger willpower muscle.`;
+  document.getElementById('reality-b').innerHTML=`<strong>${s.dopamine.action}</strong><br>${s.dopamine.desc}<br><br>Long-term: Weakened habits, lower energy, increased cravings.`;
+}
+
+// ======================== SCENARIOS VIEW ========================
+function renderScenarios(){
+  const grid=document.getElementById('scenario-grid');
+  grid.innerHTML=SCENARIOS.map((s,i)=>`
+    <div class="card" style="cursor:pointer;transition:all 0.3s" onclick="loadScenarioInSim(${i})">
+      <div style="font-size:1.5rem;margin-bottom:0.5rem">${s.title.split(' ')[0]}</div>
+      <div style="font-family:'Orbitron',monospace;font-size:0.75rem;color:var(--cyan);margin-bottom:0.5rem">${s.title.substring(2)}</div>
+      <div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:0.8rem">${s.text.substring(0,100)}...</div>
+      <button class="btn btn-primary btn-sm">▶ Play Scenario</button>
+    </div>`).join('');
+}
+function loadScenarioInSim(i){
+  scenarioIdx=i;
+  switchView('simulation',null);
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.textContent.includes('Simulation'))n.classList.add('active');else n.classList.remove('active');});
+  setTimeout(newScenario,100);
+}
+
+// ======================== QUIZ ========================
+const QUESTIONS=[
+  {cat:'DOPAMINE SYSTEM',q:'What triggers the dopamine reward system most powerfully in food?',choices:['Vitamin C content','High fat + sugar combination','Fiber content','Water content'],correct:1,explain:'The combination of fat and sugar is engineered to create maximum dopamine release — this is why ultra-processed foods are so addictive.'},
+  {cat:'GUT-BRAIN AXIS',q:'Where is most serotonin (the happiness chemical) produced?',choices:['The brain','The liver','The gut','The heart'],correct:2,explain:'95% of your serotonin is produced in the gut — feeding your gut with fiber and probiotics directly improves your mood and happiness.'},
+  {cat:'MANIPULATION SCIENCE',q:'What is the "halo effect" in food marketing?',choices:['Foods that glow under UV light','Assuming a food is healthy because ONE attribute sounds good','Foods with halos on packaging','Foods high in vitamins'],correct:1,explain:'The halo effect tricks consumers — a "whole grain" label makes people assume the entire product is healthy, even when it\'s loaded with sugar.'},
+  {cat:'HABIT LOOPS',q:'What is the correct sequence of a habit loop?',choices:['Action → Reward → Cue → Craving','Cue → Craving → Action → Reward','Reward → Cue → Action → Craving','Craving → Cue → Reward → Action'],correct:1,explain:'Cue triggers Craving → which motivates Action → which delivers Reward. Understanding this loop is the first step to breaking it.'},
+  {cat:'STRESS & EATING',q:'Why does chronic stress increase cravings for high-calorie foods?',choices:['Stress burns more calories','Cortisol increases dopamine receptor sensitivity','Stress reduces hunger entirely','None of the above'],correct:1,explain:'Cortisol (stress hormone) makes your dopamine system more sensitive to food rewards, particularly fat and sugar — your brain seeks comfort chemicals.'},
+  {cat:'SLEEP & CRAVINGS',q:'How does sleep deprivation affect food choices?',choices:['It has no effect','It increases cravings for fruits','It increases ghrelin (hunger) and reduces leptin (fullness)','It reduces appetite entirely'],correct:2,explain:'Poor sleep disrupts hunger hormones — ghrelin goes up (making you hungrier) and leptin drops (making you feel less full). This can add 300-500 extra calories/day.'},
+  {cat:'SUPERMARKET PSYCHOLOGY',q:'Why are essential items (milk, bread) placed at the BACK of supermarkets?',choices:['Temperature regulation','To force customers past high-margin impulse items','For easier restocking','Safety regulations'],correct:1,explain:'This is deliberate store design psychology — forcing you to walk past thousands of products increases impulse purchases by up to 40%.'},
+  {cat:'HORMONES',q:'Which hormone signals that you are FULL after eating?',choices:['Ghrelin','Cortisol','Insulin','Leptin'],correct:3,explain:'Leptin is your satiety hormone — produced by fat cells, it tells your brain you\'re full. Ultra-processed foods can cause leptin resistance, breaking this signal.'},
+  {cat:'EMOTIONAL EATING',q:'Emotional eating is primarily driven by which brain region?',choices:['Prefrontal cortex','Amygdala','Cerebellum','Hippocampus'],correct:1,explain:'The amygdala processes emotions and stress. When activated, it can override the prefrontal cortex (rational decision-making), leading to impulsive eating.'},
+  {cat:'COGNITIVE CONTROL',q:'What is the MOST effective strategy to resist immediate food cravings?',choices:['Willpower alone','Implementation intentions (if-then planning)','Avoiding all temptation','Punishing yourself after giving in'],correct:1,explain:'Research shows "implementation intentions" (e.g., "If I feel stressed, I will drink water and walk") are 2-3x more effective than pure willpower.'}
+];
+
+let qTimer=null;
+
+function startQuiz(){
+  state.quizQ=0;state.quizScore=0;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(state.quizQ>=QUESTIONS.length){endQuiz();return;}
+  const q=QUESTIONS[state.quizQ];
+  document.getElementById('quiz-progress').textContent=`Question ${state.quizQ+1} / ${QUESTIONS.length}`;
+  document.getElementById('quiz-category').textContent=q.cat;
+  document.getElementById('quiz-question').textContent=q.q;
+  document.getElementById('quiz-feedback').classList.remove('show','wrong-fb');
+  const choices=document.getElementById('quiz-choices');
+  choices.innerHTML=q.choices.map((c,i)=>`<button class="choice-btn" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${c}</button>`).join('');
+  startQTimer();
+}
+
+function startQTimer(){
+  clearInterval(qTimer);
+  let t=30;
+  document.getElementById('quiz-timer').textContent=t+'s';
+  document.getElementById('quiz-bar-fill').style.width='100%';
+  qTimer=setInterval(()=>{
+    t--;
+    document.getElementById('quiz-timer').textContent=t+'s';
+    document.getElementById('quiz-bar-fill').style.width=(t/30*100)+'%';
+    if(t<=0){clearInterval(qTimer);timeoutQuestion();}
+  },1000);
+}
+
+function timeoutQuestion(){
+  const q=QUESTIONS[state.quizQ];
+  const fb=document.getElementById('quiz-feedback');
+  fb.classList.add('show','wrong-fb');
+  fb.innerHTML=`⏱️ Time's up! The answer was: <strong>${q.choices[q.correct]}</strong><br>${q.explain}`;
+  document.querySelectorAll('#quiz-choices .choice-btn')[q.correct].classList.add('correct');
+  setTimeout(()=>{state.quizQ++;renderQuestion();},2500);
+}
+
+function answerQuiz(idx){
+  clearInterval(qTimer);
+  const q=QUESTIONS[state.quizQ];
+  const btns=document.querySelectorAll('#quiz-choices .choice-btn');
+  const fb=document.getElementById('quiz-feedback');
+  btns.forEach(b=>b.onclick=null);
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    fb.classList.add('show');
+    fb.innerHTML=`✅ Correct! +100 🪙<br><strong>Why:</strong> ${q.explain}`;
+    state.quizScore+=100;
+    addCoins(100);
+    notify('Correct! +100 coins 🎉','success');
+  }else{
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.classList.add('show','wrong-fb');
+    fb.innerHTML=`❌ Incorrect! The answer: <strong>${q.choices[q.correct]}</strong><br>${q.explain}`;
+    notify('Incorrect! Study the explanation.','warning');
+  }
+  setTimeout(()=>{state.quizQ++;renderQuestion();},2800);
+}
+
+function skipQuestion(){state.quizQ++;if(state.quizQ<QUESTIONS.length)renderQuestion();else endQuiz();}
+
+function endQuiz(){
+  clearInterval(qTimer);
+  document.getElementById('quiz-question').textContent=`Quiz Complete! Score: ${state.quizScore} / ${QUESTIONS.length*100}`;
+  document.getElementById('quiz-choices').innerHTML=`<button class="btn btn-primary" onclick="startQuiz()">🔄 Play Again</button>`;
+  document.getElementById('quiz-timer').textContent='--';
+  document.getElementById('quiz-bar-fill').style.width='0%';
+  document.getElementById('quiz-feedback').classList.remove('show');
+  notify(`Quiz complete! Score: ${state.quizScore}`,'success');
+  renderQuizLB();
+}
+
+function renderQuizLB(){
+  const scores=[{n:'NeuraChamp',s:1000,e:'🥇'},{n:'BrainMaster',s:950,e:'🥈'},{n:'YOU',s:state.quizScore,e:'⭐'},{n:'GutGenius',s:800,e:'🏅'},{n:'MindfulEater',s:750,e:'🏅'}].sort((a,b)=>b.s-a.s);
+  document.getElementById('quiz-lb').innerHTML=scores.map((s,i)=>`
+    <div class="lb-row" style="${s.n==='YOU'?'border-color:var(--cyan);background:rgba(0,255,200,0.05)':''}">
+      <div class="lb-rank" style="color:${i===0?'var(--yellow)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--text2)'}">#${i+1}</div>
+      <div class="lb-avatar">${s.e}</div>
+      <div class="lb-name" style="${s.n==='YOU'?'color:var(--cyan)':''}">${s.n}</div>
+      <div class="lb-score">${s.s}</div>
+    </div>`).join('');
+}
+
+// ======================== GUT ========================
+function renderGutViz(){
+  const good=['🦠','🌱','💚','⭐','🔬'];
+  const bad=['💀','🔴','☠️','❌'];
+  const viz=document.getElementById('gut-viz');
+  const goodCount=Math.floor(state.gutScore/10);
+  const badCount=10-goodCount;
+  let html='';
+  for(let i=0;i<goodCount;i++)html+=`<div class="microbe" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);animation-delay:${i*0.2}s">${good[i%good.length]}</div>`;
+  for(let i=0;i<badCount;i++)html+=`<div class="microbe" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);animation-delay:${i*0.2}s">${bad[i%bad.length]}</div>`;
+  viz.innerHTML=html;
+}
+
+function feedGut(type){
+  const effects={
+    fiber:{score:+12,mood:+8,clarity:+10,energy:+8,msg:'🥦 Excellent! Fiber feeds good bacteria (prebiotics). Serotonin up. Clarity improving.'},
+    probiotic:{score:+8,mood:+10,clarity:+5,energy:+5,msg:'🥛 Probiotic consumed! Lactobacillus and Bifidobacterium colonies expanding. Mood boosting.'},
+    sugar:{score:-8,mood:-5,clarity:-10,energy:+5,msg:'🍭 Sugar causes dysbiosis — bad bacteria thrive on it. Short energy spike, followed by crash and brain fog.'},
+    junk:{score:-15,mood:-10,clarity:-15,energy:-10,msg:'🍟 Junk food causes gut inflammation. Good microbes depleted. Serotonin production dropping.'}
+  };
+  const e=effects[type];
+  state.gutScore=Math.max(0,Math.min(100,state.gutScore+e.score));
+  state.gutMood=Math.max(0,Math.min(100,state.gutMood+e.mood));
+  state.gutClarity=Math.max(0,Math.min(100,state.gutClarity+e.clarity));
+  state.gutEnergy=Math.max(0,Math.min(100,state.gutEnergy+e.energy));
+  document.getElementById('gut-score').textContent=state.gutScore+'%';
+  document.getElementById('gut-score-fill').style.width=state.gutScore+'%';
+  document.getElementById('gut-mood').textContent=state.gutMood+'%';
+  document.getElementById('gut-mood-fill').style.width=state.gutMood+'%';
+  document.getElementById('gut-clarity').textContent=state.gutClarity+'%';
+  document.getElementById('gut-clarity-fill').style.width=state.gutClarity+'%';
+  document.getElementById('gut-energy').textContent=state.gutEnergy+'%';
+  document.getElementById('gut-energy-fill').style.width=state.gutEnergy+'%';
+  document.getElementById('gut-feedback').textContent=e.msg;
+  const fog=document.getElementById('brain-fog-status');
+  fog.textContent=state.gutClarity<40?'🌫️ BRAIN FOG DETECTED':state.gutClarity<60?'⚠️ MILD MENTAL HAZE':'✅ CLEAR COGNITION';
+  fog.style.color=state.gutClarity<40?'var(--red)':state.gutClarity<60?'var(--yellow)':'var(--green)';
+  renderGutViz();
+  notify(e.msg.substring(0,50)+'...',e.score>0?'success':'warning');
+  addCoins(e.score>0?15:0);
+  // update sidebar
+  document.getElementById('sb-gut').style.width=state.gutScore+'%';
+}
+
+// ======================== HORMONES / CYCLE ========================
+const PHASES={
+  menstrual:{title:'🩸 Menstrual Phase (Days 1-5)',desc:'Low estrogen + progesterone. Comfort food cravings are highest. Iron-rich foods are essential. Energy is lowest. Be compassionate with yourself — cravings are hormonal, not weakness.',estrogen:20,prog:15,cortisol:60,insulin:55,leptin:45,craving:80,mood:'Low',tip:'Focus on: Dark chocolate, leafy greens, legumes, warming foods.'},
+  follicular:{title:'🌱 Follicular Phase (Days 6-13)',desc:'Rising estrogen. Dopamine sensitivity increasing. Better mood, clearer decisions. This is your BEST window for challenging behavioral goals and resisting cravings.',estrogen:70,prog:20,cortisol:35,insulin:75,leptin:65,craving:25,mood:'Rising',tip:'Optimal for: Learning new habits, complex decisions, intermittent fasting.'},
+  ovulation:{title:'🌸 Ovulation Phase (Days 14-16)',desc:'Peak estrogen. Dopamine and serotonin at highest. Maximum cognitive control and impulse resistance. Best time to tackle your hardest behavioral challenges.',estrogen:90,prog:40,cortisol:25,insulin:85,leptin:80,craving:15,mood:'Peak',tip:'Use this window: Set new behavioral goals, meal prep, social challenges.'},
+  luteal:{title:'🌕 Luteal Phase (Days 17-28)',desc:'Rising progesterone, falling estrogen. Serotonin drops → cravings for carbs and sugar spike. This is when emotional eating is most common. Plan ahead.',estrogen:55,prog:80,cortisol:70,insulin:50,leptin:40,craving:75,mood:'Falling',tip:'Strategies: Magnesium, complex carbs, regular meals, reduced caffeine.'}
+};
+
+function selectPhase(phase){
+  state.cyclePhase=phase;
+  const p=PHASES[phase];
+  document.querySelectorAll('.phase-pill').forEach(el=>{el.classList.remove('active');el.style.borderColor='var(--border)';el.style.color='var(--text2)'});
+  const el=document.getElementById('phase-'+phase);
+  if(el){el.classList.add('active');el.style.borderColor=phase==='menstrual'?'rgba(239,68,68,0.5)':phase==='follicular'?'rgba(34,197,94,0.5)':phase==='ovulation'?'rgba(251,191,36,0.5)':'rgba(139,92,246,0.5)';el.style.color='white';}
+  document.getElementById('phase-info').innerHTML=`<div class="scenario-title">${p.title}</div><div class="scenario-text">${p.desc}<br><br><strong style="color:var(--cyan)">${p.tip}</strong></div>`;
+  // update hormone meters
+  document.getElementById('h-estrogen').textContent=p.estrogen+'%';document.getElementById('h-estrogen-fill').style.width=p.estrogen+'%';
+  document.getElementById('h-prog').textContent=p.prog+'%';document.getElementById('h-prog-fill').style.width=p.prog+'%';
+  document.getElementById('h-cortisol').textContent=p.cortisol+'%';document.getElementById('h-cortisol-fill').style.width=p.cortisol+'%';
+  document.getElementById('h-insulin').textContent=p.insulin+'%';document.getElementById('h-insulin-fill').style.width=p.insulin+'%';
+  document.getElementById('h-leptin').textContent=p.leptin+'%';document.getElementById('h-leptin-fill').style.width=p.leptin+'%';
+  notify('Phase: '+p.title,'info');
+}
+
+function toggleCycle(){
+  document.getElementById('cycle-content').style.display=document.getElementById('cycle-enabled').checked?'block':'none';
+}
+
+// ======================== PROFILES ========================
+const PROFILES={
+  student:{label:'📚 Student',desc:'High stress, irregular meals, exam-driven eating, social peer pressure, limited budget, often sleep-deprived. Cravings spike around deadlines. Caffeine dependency common.'},
+  athlete:{label:'🏋️ Athlete',desc:'High metabolic rate, protein-driven cravings, performance-focused decisions. Lower emotional eating tendency. Strategic fueling mindset. Challenge: overcompensation eating.'},
+  professional:{label:'💼 Working Professional',desc:'Time-poor decisions, desk lunch habits, stress eating at work, reward-based weekend eating, client dinners. Coffee dependency. Metabolic slowdown from sedentary work.'},
+  sedentary:{label:'🛋️ Sedentary',desc:'Low NEAT (daily movement), increased insulin resistance risk, higher comfort food cravings, disrupted hunger signals, reduced metabolic rate, increased emotional eating risk.'},
+  optimizer:{label:'🎯 Health Optimizer',desc:'Data-driven, high awareness, tracks nutrition, uses behavioral strategies. Risk: orthorexic tendencies, rigid rules. Strength: implements if-then planning, mindful eating.'}
+};
+function setProfile(p,btn){
+  state.profile=p;
+  document.querySelectorAll('.card button.btn-ghost, .card button.btn-primary').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setProfile'))b.className='btn btn-ghost';});
+  if(btn)btn.className='btn btn-primary';
+  document.getElementById('profile-info').innerHTML=`<strong style="color:var(--cyan)">${PROFILES[p].label}</strong><br><br>${PROFILES[p].desc}`;
+  notify('Profile set: '+PROFILES[p].label,'success');
+}
+
+// ======================== MANIPULATION ========================
+const MANIP_DATA={
+  ads:{title:'📺 Advertisement Psychology',items:[
+    {icon:'🎯',title:'Scarcity Effect',desc:'"LIMITED TIME OFFER!" — artificial scarcity triggers FOMO (fear of missing out), bypassing rational evaluation. Works 40% better with countdown timers.',badge:'HIGH RISK'},
+    {icon:'😊',title:'Emotional Anchoring',desc:'Happy families + sunshine + fast food = emotional association override. Your brain links the emotional feeling, not the nutrition, with the product.',badge:'VERY HIGH RISK'},
+    {icon:'⭐',title:'Celebrity Endorsement',desc:'Halo transfer: if a celebrity you admire endorses a food, your brain auto-associates their positive traits with the product. Completely bypasses nutritional logic.',badge:'HIGH RISK'},
+    {icon:'🌿',title:'"Natural" Greenwashing',desc:'"All-natural" means nothing legally. A product can be 100% natural AND loaded with sugar. This label increases perceived healthiness by up to 60% in studies.',badge:'DECEPTIVE'}
+  ]},
+  labels:{title:'🏷️ Label Manipulation Tactics',items:[
+    {icon:'💚',title:'Halo Claims',desc:'"Whole grain!" on cereal with 40g sugar/serving. One good attribute masks all negatives. Always check the full nutrition panel, not the front.',badge:'COMMON'},
+    {icon:'🔢',title:'Serving Size Tricks',desc:'Serving size shown = 1/3 of what you\'d actually eat. Calorie count looks great per serving, but you\'ll eat 3 servings. Multiply EVERYTHING by 3.',badge:'VERY COMMON'},
+    {icon:'📉',title:'"Reduced Fat" Trap',desc:'When fat is removed, flavor disappears. Manufacturers add 2-3x more sugar to compensate. "Reduced fat" products often have MORE calories than originals.',badge:'TRAP'},
+    {icon:'🌱',title:'Organic ≠ Healthy',desc:'Organic sugar is still sugar. Organic cookies are still cookies. Organic certification relates to farming practices only — not nutritional value.',badge:'MISCONCEPTION'}
+  ]},
+  biases:{title:'🧠 Cognitive Biases in Food Choices',items:[
+    {icon:'👁️',title:'Halo Effect',desc:'One positive feature makes the entire product seem positive. "Contains Vitamin C!" → brain assumes everything is healthy. A key weapon of processed food marketing.',badge:'UNIVERSAL'},
+    {icon:'💰',title:'Anchoring Bias',desc:'Original price $20, NOW $12! The $20 "anchors" your perception — $12 feels like a bargain even if the product is worth $5. Used in portion sizes too.',badge:'PERVASIVE'},
+    {icon:'🔴',title:'Scarcity Bias',desc:'"Only 3 left in stock!" The thought of losing access makes the item seem MORE desirable. Applied to food: "Last day of sale" overrides rational thinking.',badge:'POWERFUL'},
+    {icon:'👥',title:'Social Proof Bias',desc:'"Best-selling!" "1 Million served!" We assume if others chose it, it must be good. This bypasses individual evaluation entirely.',badge:'HIGH IMPACT'}
+  ]},
+  placement:{title:'🛒 Supermarket Architecture Psychology',items:[
+    {icon:'🚶',title:'Forced Path Design',desc:'Supermarkets are engineered mazes. You MUST pass thousands of products to reach essentials. Each additional minute = 10-15% more spending.',badge:'DESIGNED'},
+    {icon:'👁️‍🗨️',title:'Eye-Level Manipulation',desc:'Most profitable, highest-margin items are placed at eye level. Healthier, cheaper options are on the bottom shelf. You see profitability first.',badge:'ALWAYS ACTIVE'},
+    {icon:'🎵',title:'Sensory Manipulation',desc:'Slow music slows your pace (+32% spending). Bakery smells increase appetite. Warm lighting makes products look more appealing. All engineered.',badge:'AMBIENT'},
+    {icon:'🛒',title:'Cart Size Psychology',desc:'Larger carts trigger a psychological need to "fill" them. Study: doubling cart size increased purchases by 40%. Always use a basket when possible.',badge:'PROVEN'}
+  ]}
+};
+
+let currentManipTab='ads';
+function switchManipTab(tab,el){
+  currentManipTab=tab;
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderManipContent();
+}
+function renderManipContent(){
+  const d=MANIP_DATA[currentManipTab];
+  const badgeColors={DECEPTIVE:'var(--red)','HIGH RISK':'var(--orange)','VERY HIGH RISK':'var(--red)',COMMON:'var(--yellow)','VERY COMMON':'var(--orange)',TRAP:'var(--red)',MISCONCEPTION:'var(--purple)',UNIVERSAL:'var(--cyan)',PERVASIVE:'var(--orange)',POWERFUL:'var(--red)','HIGH IMPACT':'var(--orange)',DESIGNED:'var(--blue)','ALWAYS ACTIVE':'var(--red)',AMBIENT:'var(--purple)',PROVEN:'var(--orange)'};
+  document.getElementById('manip-content').innerHTML=`
+    <div style="margin-bottom:0.8rem;font-size:0.9rem;color:var(--text2)">${d.title}</div>
+    <div class="grid-2">${d.items.map(item=>`
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:1rem;transition:all 0.2s" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <span style="font-size:1.3rem">${item.icon}</span>
+            <span style="font-weight:700;font-size:0.85rem">${item.title}</span>
+          </div>
+          <span style="font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:10px;background:rgba(255,255,255,0.08);color:${badgeColors[item.badge]||'var(--text2)'};white-space:nowrap">${item.badge}</span>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text2);line-height:1.5">${item.desc}</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:0.7rem" onclick="detectBias()">🔍 I Spotted This</button>
+      </div>`).join('')}</div>`;
+}
+function detectBias(){addCoins(25);notify('Bias detected! +25 NeuroCoins 🎯','success');}
+
+// ======================== PSYCHOLOGY ========================
+let psychStress=35;
+function addStressor(type){
+  const adds={exam:20,work:15,social:12,sleep:25};
+  psychStress=Math.min(100,psychStress+(adds[type]||10));
+  document.getElementById('psych-stress').textContent=psychStress+'%';
+  document.getElementById('psych-stress-fill').style.width=psychStress+'%';
+  const messages={
+    exam:'📝 Academic stress → cortisol spike → ghrelin increase → cravings for high-calorie comfort foods (especially carbs and fat). Your brain seeks quick energy and dopamine relief.',
+    work:'💼 Deadline pressure → sympathetic nervous system activation → blood sugar fluctuation → impulsive food decisions. Time scarcity reduces prefrontal cortex decision quality.',
+    social:'😰 Social anxiety → elevated cortisol → emotional eating as self-soothing mechanism. Alone, people tend to eat less. Social anxiety can trigger secretive binge eating.',
+    sleep:'😴 Sleep deprivation: Leptin -18%, Ghrelin +28%. Sweet cravings increase by 45%. Impulse control (prefrontal cortex) reduced significantly. Worst combination for food choices.'
+  };
+  document.getElementById('stress-eating-result').innerHTML=`<strong style="color:var(--orange)">Stress Level: ${psychStress}%</strong><br><br>${messages[type]}`;
+  if(psychStress>70)notify('⚠️ Critical stress! High emotional eating risk!','error');
+}
+function releaseStress(){
+  psychStress=Math.max(0,psychStress-30);
+  document.getElementById('psych-stress').textContent=psychStress+'%';
+  document.getElementById('psych-stress-fill').style.width=psychStress+'%';
+  document.getElementById('stress-eating-result').textContent='🧘 Mindfulness practice activated. Cortisol decreasing. Prefrontal cortex re-engaging. Cravings normalizing.';
+  notify('Stress released! 🧘','success');addCoins(20);
+}
+
+const BIASES2=[
+  {name:'Halo Effect',icon:'👁️',desc:'Assuming all attributes are positive because of one good trait.',example:'Organic candy bars still have high sugar.'},
+  {name:'Emotional Bias',icon:'💔',desc:'Emotions override rational food decisions.',example:'Stress leads to comfort food regardless of hunger.'},
+  {name:'Scarcity Effect',icon:'⏰',desc:'Rare availability increases perceived value and desire.',example:'"Seasonal" items feel more special even if identical year-round.'},
+  {name:'Social Proof',icon:'👥',desc:'We eat what we think others eat.',example:'Restaurant "most popular" labels increase orders by 20%.'},
+  {name:'Anchoring Bias',icon:'⚓',desc:'First number seen influences all subsequent judgments.',example:'"Was $15, now $9" — the $15 anchor makes $9 feel like a deal.'},
+  {name:'Optimism Bias',icon:'🌟',desc:'Believing bad health consequences happen to others, not us.',example:'"I can eat this now and exercise it off later."'}
+];
+
+function renderBiasCards(){
+  document.getElementById('bias-cards').innerHTML=BIASES2.map(b=>`
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:1rem;transition:all 0.3s;cursor:pointer" onclick="this.style.borderColor='var(--cyan)'">
+      <div style="font-size:1.5rem;margin-bottom:0.4rem">${b.icon}</div>
+      <div style="font-weight:700;font-size:0.85rem;color:var(--cyan);margin-bottom:0.3rem">${b.name}</div>
+      <div style="font-size:0.75rem;color:var(--text2);margin-bottom:0.5rem;line-height:1.4">${b.desc}</div>
+      <div style="font-size:0.72rem;background:rgba(0,255,200,0.05);border-radius:6px;padding:0.4rem;border:1px solid rgba(0,255,200,0.1);color:var(--text2)">💡 ${b.example}</div>
+    </div>`).join('');
+}
+
+let reflectionData=[];
+function generateReflection(){
+  const insights=[
+    {icon:'🧠',color:'var(--cyan)',text:'Your decision patterns suggest a Rational Thinker profile — but stress significantly reduces your cognitive control. Plan ahead for high-stress periods.'},
+    {icon:'😤',color:'var(--orange)',text:'Stress-driven eating detected in your behavioral profile. Implement the "pause-and-assess" technique before stress eating: 90-second mindfulness check.'},
+    {icon:'🌙',color:'var(--purple)',text:'Late-night craving patterns identified. Your gut microbiome activity peaks in evening — establish a cutoff time and prepare herbal alternatives.'},
+    {icon:'📱',color:'var(--yellow)',text:'Screen-eating association detected. Mindless eating while distracted adds up to 40% more calories. Implement "tech-free meals" protocol.'},
+    {icon:'🎯',color:'var(--green)',text:'Your quiz performance shows strong theoretical knowledge. The gap is application under pressure. Use implementation intentions for high-risk moments.'}
+  ];
+  reflectionData=insights.slice(0,3+Math.floor(Math.random()*2));
+  document.getElementById('reflection-cards').innerHTML=reflectionData.map(r=>`
+    <div style="display:flex;gap:0.7rem;padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border);border-left:3px solid ${r.color}">
+      <span style="font-size:1.2rem">${r.icon}</span>
+      <span style="font-size:0.78rem;color:var(--text2);line-height:1.5">${r.text}</span>
+    </div>`).join('');
+  notify('Behavioral analysis complete!','success');
+  addCoins(30);
+}
+
+// ======================== AVATAR ========================
+const AVATAR_STATES=[
+  {emoji:'😔',state:'DECLINING SELF',desc:'Poor choices are compounding. Gut health low, cognitive fog increasing.'},
+  {emoji:'😐',state:'STAGNANT SELF',desc:'No growth or decline. You\'re maintaining but not thriving.'},
+  {emoji:'🙂',state:'AWARE SELF',desc:'Consciousness of behaviors growing. Occasional slipbacks are normal.'},
+  {emoji:'😊',state:'BALANCED SELF',desc:'Good decision patterns forming. Energy and clarity improving.'},
+  {emoji:'😄',state:'THRIVING SELF',desc:'Behavioral mastery emerging. Habits are automatizing positively.'},
+  {emoji:'🤩',state:'OPTIMIZED SELF',desc:'Peak performance. Cravings under control. Gut-brain axis thriving.'},
+  {emoji:'🧠',state:'NEURAL MASTER',desc:'Complete behavioral intelligence. You understand and control your system.'}
+];
+let avatarLevel=3;
+const timeline=[];
+
+function evolveAvatar(type){
+  if(type==='good'){
+    avatarLevel=Math.min(6,avatarLevel+1);
+    addCoins(40);
+    timeline.unshift({t:new Date().toLocaleTimeString(),action:'✅ Conscious Choice',result:'Evolution progress +1',color:'var(--green)'});
+    notify('Great choice! Future self evolving 🌟','success');
+  }else{
+    avatarLevel=Math.max(0,avatarLevel-1);
+    timeline.unshift({t:new Date().toLocaleTimeString(),action:'❌ Gave In to Cravings',result:'Setback — but learn and continue',color:'var(--red)'});
+    notify('Setback noted. Every day is a new chance.','warning');
+  }
+  const av=AVATAR_STATES[avatarLevel];
+  document.getElementById('avatar-emoji').textContent=av.emoji;
+  document.getElementById('avatar-state').textContent=av.state;
+  document.getElementById('avatar-desc').textContent=av.desc;
+  document.getElementById('timeline').innerHTML=timeline.slice(0,10).map(e=>`
+    <div style="display:flex;gap:0.7rem;padding:0.6rem;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ${e.color}">
+      <div style="font-size:0.65rem;color:var(--text2);white-space:nowrap">${e.t}</div>
+      <div><div style="font-size:0.8rem;font-weight:600">${e.action}</div><div style="font-size:0.72rem;color:var(--text2)">${e.result}</div></div>
+    </div>`).join('');
+}
+
+// ======================== SKILL TREE ========================
+const SKILLS=[
+  {icon:'🛡️',name:'Craving Shield',desc:'Reduce dopamine craving spikes by 20%',cost:200,skill:'impulse',val:15,unlocked:false},
+  {icon:'👁️',name:'Label Decoder',desc:'Instantly identify manipulation in food labels',cost:150,skill:'awareness',val:12,unlocked:true},
+  {icon:'⚡',name:'Rapid Reflection',desc:'Activate reflection mode within 5 seconds of craving',cost:250,skill:'decision',val:18,unlocked:false},
+  {icon:'🧘',name:'Cortisol Control',desc:'Stress-eating probability reduced by 30%',cost:300,skill:'emotion',val:20,unlocked:false},
+  {icon:'🔬',name:'Gut Whisperer',desc:'Enhanced gut-brain signal awareness',cost:200,skill:'awareness',val:10,unlocked:false},
+  {icon:'🧠',name:'Neural Override',desc:'Override dopamine impulse in high-craving scenarios',cost:500,skill:'impulse',val:25,unlocked:false},
+  {icon:'📊',name:'Pattern Prophet',desc:'Predict your own behavioral patterns before they occur',cost:350,skill:'decision',val:20,unlocked:false},
+  {icon:'🌀',name:'Habit Architect',desc:'Build new behavioral loops 50% faster',cost:400,skill:'decision',val:22,unlocked:false}
+];
+
+function renderSkillTree(){
+  document.getElementById('skill-tree').innerHTML=SKILLS.map((s,i)=>`
+    <div class="skill-node ${s.unlocked?'unlocked':'locked'}" onclick="unlockSkill(${i})">
+      <div class="skill-icon">${s.icon}</div>
+      <div class="skill-info">
+        <div class="skill-name">${s.name}</div>
+        <div class="skill-desc">${s.desc}</div>
+        <div class="skill-cost">${s.unlocked?'✅ UNLOCKED':'🪙 '+s.cost+' SP'}</div>
+      </div>
+      ${s.unlocked?'<div class="skill-check">✓</div>':''}
+    </div>`).join('');
+}
+
+function unlockSkill(i){
+  const s=SKILLS[i];
+  if(s.unlocked){notify('Already unlocked!','warning');return;}
+  if(state.skillPoints<s.cost){notify('Not enough skill points!','error');return;}
+  state.skillPoints-=s.cost;
+  s.unlocked=true;
+  document.getElementById('skill-points').textContent=state.skillPoints;
+  notify(`${s.icon} ${s.name} unlocked!`,'success');
+  // update skill bars
+  const skillMap={impulse:'sk-impulse',awareness:'sk-awareness',decision:'sk-decision',emotion:'sk-emotion'};
+  const fillId=skillMap[s.skill]+'-fill';
+  const valId=skillMap[s.skill];
+  const current=parseInt(document.getElementById(valId).textContent)||0;
+  const newVal=Math.min(100,current+s.val);
+  document.getElementById(valId).textContent=newVal+'%';
+  document.getElementById(fillId).style.width=newVal+'%';
+  renderSkillTree();
+}
+
+// ======================== SOCIAL ========================
+const LB_PLAYERS=[
+  {name:'NeuraChamp',score:9840,rank:1,badge:'🥇',guild:'Dopamine Destroyers'},
+  {name:'BrainMaster',score:8920,rank:2,badge:'🥈',guild:'Gut Guardians'},
+  {name:'GutGenius',score:8100,rank:3,badge:'🥉',guild:'Rational Rebels'},
+  {name:'MindfulEater',score:7450,rank:4,badge:'🏅',guild:'Cortisol Crushers'},
+  {name:'CraveControl',score:6890,rank:5,badge:'🏅',guild:'Neuro Warriors'},
+  {name:'YOU',score:state.quizScore||1250,rank:6,badge:'⭐',guild:'Gut Guardians'},
+  {name:'BiomeBooster',score:6200,rank:7,badge:'🎖️',guild:'Dopamine Destroyers'},
+  {name:'ImpulseKing',score:5800,rank:8,badge:'🎖️',guild:'Rational Rebels'}
+];
+
+function renderLeaderboard(tab){
+  const list=tab==='weekly'?LB_PLAYERS.slice(0,5):tab==='friends'?LB_PLAYERS.slice(3,8):LB_PLAYERS;
+  document.getElementById('leaderboard-list').innerHTML=list.map((p,i)=>`
+    <div class="lb-row" style="${p.name==='YOU'?'border-color:var(--cyan);background:rgba(0,255,200,0.04)':''}">
+      <div class="lb-rank" style="color:${i===0?'var(--yellow)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--text2)'}">${p.badge}</div>
+      <div class="lb-avatar">👤</div>
+      <div class="lb-name" style="${p.name==='YOU'?'color:var(--cyan)':''}">${p.name}</div>
+      <div class="lb-badge">${p.guild}</div>
+      <div class="lb-score">${p.score.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+function switchLBTab(tab,el){
+  document.querySelectorAll('#view-social .tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderLeaderboard(tab);
+}
+
+const GUILDS=[
+  {name:'Dopamine Destroyers',icon:'⚡',members:128,score:45200,desc:'Masters of impulse control'},
+  {name:'Gut Guardians',icon:'🦠',members:94,score:38700,desc:'Microbiome optimization experts'},
+  {name:'Rational Rebels',icon:'🧠',members:156,score:52100,desc:'Logic always wins over cravings'},
+  {name:'Neuro Warriors',icon:'🎯',members:67,score:29400,desc:'Full-spectrum behavioral training'}
+];
+
+function renderGuilds(){
+  document.getElementById('guilds-list').innerHTML=GUILDS.map(g=>`
+    <div class="lb-row">
+      <div style="font-size:1.5rem">${g.icon}</div>
+      <div class="lb-info" style="flex:1">
+        <div style="font-weight:700;font-size:0.85rem">${g.name}</div>
+        <div style="font-size:0.7rem;color:var(--text2)">${g.desc} • ${g.members} members</div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--yellow)">${g.score.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+function joinGuild(){notify('Guild system: Join a team to unlock cooperative challenges! 🤝','info');}
+
+const ACHIEVEMENTS=[
+  {icon:'🔥',name:'First Spark',desc:'Complete first scenario',earned:true},
+  {icon:'🧠',name:'Brain Master',desc:'Answer 10 quiz questions correctly',earned:true},
+  {icon:'💚',name:'Gut Guardian',desc:'Reach 80% gut health score',earned:false},
+  {icon:'🎯',name:'Bias Buster',desc:'Identify 10 marketing biases',earned:false},
+  {icon:'⚡',name:'Streak Lord',desc:'Maintain 21-day streak',earned:false},
+  {icon:'🌟',name:'NeuroElite',desc:'Reach NeuroScore 90+',earned:false},
+  {icon:'🛡️',name:'Iron Will',desc:'Resist 50 cravings',earned:true},
+  {icon:'📊',name:'Data Driven',desc:'Complete 100 decisions',earned:true}
+];
+
+function renderAchievements(){
+  document.getElementById('achievements-grid').innerHTML=ACHIEVEMENTS.map(a=>`
+    <div style="text-align:center;padding:0.8rem;background:${a.earned?'rgba(0,255,200,0.08)':'rgba(255,255,255,0.02)'};border:1px solid ${a.earned?'rgba(0,255,200,0.3)':'var(--border)'};border-radius:10px;opacity:${a.earned?1:0.5}">
+      <div style="font-size:1.8rem;margin-bottom:0.3rem">${a.icon}</div>
+      <div style="font-size:0.75rem;font-weight:700;color:${a.earned?'var(--cyan)':'var(--text2)'}">${a.name}</div>
+      <div style="font-size:0.65rem;color:var(--text2);margin-top:2px">${a.desc}</div>
+      ${a.earned?'<div style="font-size:0.65rem;color:var(--green);margin-top:4px">✅ EARNED</div>':''}
+    </div>`).join('');
+}
+
+// ======================== SHOP ========================
+const SHOP_ITEMS={
+  abilities:[
+    {icon:'🛡️',name:'Craving Blocker',desc:'Reduce craving spikes for 1 hour',price:100,color:'var(--cyan)'},
+    {icon:'⚡',name:'Dopamine Detox',desc:'Reset addiction index instantly',price:200,color:'var(--purple)'},
+    {icon:'🧘',name:'Zen Mode',desc:'Stress immunity for 30 minutes',price:150,color:'var(--blue)'},
+    {icon:'🔍',name:'X-Ray Vision',desc:'Auto-detect manipulation in scenarios',price:300,color:'var(--yellow)'},
+    {icon:'🌀',name:'Time Warp',desc:'Replay last 3 decisions',price:250,color:'var(--pink)'},
+    {icon:'💡',name:'Insight Surge',desc:'+50% NeuroScore for next quiz',price:175,color:'var(--green)'}
+  ],
+  skins:[
+    {icon:'👾',name:'Cyber Neural',desc:'Futuristic avatar skin',price:500,color:'var(--cyan)'},
+    {icon:'🌿',name:'Biome Guardian',desc:'Nature-themed interface',price:400,color:'var(--green)'},
+    {icon:'⚡',name:'Electric Mind',desc:'High-energy visual theme',price:450,color:'var(--yellow)'},
+    {icon:'🌸',name:'Zen Master',desc:'Calm, minimalist aesthetic',price:350,color:'var(--pink)'}
+  ],
+  scenarios:[
+    {icon:'🏋️',name:'Athlete Pack',desc:'5 sports nutrition scenarios',price:300,color:'var(--orange)'},
+    {icon:'🎓',name:'Student Bundle',desc:'Campus food decision scenarios',price:250,color:'var(--blue)'},
+    {icon:'✈️',name:'Travel Scenarios',desc:'Healthy eating while traveling',price:200,color:'var(--purple)'},
+    {icon:'🏢',name:'Office Life',desc:'Corporate cafeteria decisions',price:225,color:'var(--cyan)'}
+  ]
+};
+
+let currentShopTab='abilities';
+function switchShopTab(tab,el){
+  currentShopTab=tab;
+  document.querySelectorAll('#view-shop .tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderShop();
+}
+function renderShop(){
+  document.getElementById('shop-grid').innerHTML=SHOP_ITEMS[currentShopTab].map(item=>`
+    <div class="shop-item">
+      <span class="item-icon">${item.icon}</span>
+      <div class="item-name" style="color:${item.color}">${item.name}</div>
+      <div style="font-size:0.7rem;color:var(--text2);margin-bottom:0.5rem">${item.desc}</div>
+      <div class="item-price">🪙 ${item.price}</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:0.5rem;width:100%" onclick="buyItem('${item.name}',${item.price})">BUY</button>
+    </div>`).join('');
+}
+function buyItem(name,price){
+  if(state.coins<price){notify('Not enough NeuroCoins! Earn more by completing quests.','error');return;}
+  state.coins-=price;
+  document.getElementById('coins').textContent=state.coins;
+  document.getElementById('ds-coins').textContent=state.coins;
+  document.getElementById('shop-coins').textContent=state.coins;
+  notify(`${name} purchased! 🛒`,'success');
+}
+
+// ======================== ANALYTICS ========================
+const AI_PREDS=[
+  {icon:'🔮',text:'HIGH probability of stress-eating tonight (Thursday evening, post-work pattern detected)',risk:'MEDIUM',color:'var(--yellow)'},
+  {icon:'⚡',text:'Weekend binge risk elevated — social gathering detected in behavior pattern',risk:'HIGH',color:'var(--orange)'},
+  {icon:'📈',text:'Positive trajectory detected — consistent rational choices improving',risk:'LOW',color:'var(--green)'},
+  {icon:'🌙',text:'Late-night snacking window: 10PM-12AM is your highest-risk period',risk:'HIGH',color:'var(--red)'}
+];
+const INTERVENTIONS=[
+  {icon:'💧',text:'Drink a glass of water before opening the fridge (reduces impulse eating by 35%).',action:'Set Water Reminder'},
+  {icon:'📝',text:'Write down 3 things you\'re grateful for before meals (reduces emotional eating).', action:'Open Journal'},
+  {icon:'⏱️',text:'Apply the 10-minute rule: wait 10 minutes before acting on any food craving.',action:'Start Timer'},
+  {icon:'🚶',text:'Take a 5-minute walk when a craving hits — movement redirects dopamine pathways.',action:'Track Walk'}
+];
+
+function runAIAnalysis(){
+  document.getElementById('ai-predictions').innerHTML=AI_PREDS.map(p=>`
+    <div style="display:flex;gap:0.7rem;padding:0.8rem;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ${p.color}">
+      <span style="font-size:1.2rem">${p.icon}</span>
+      <div style="flex:1">
+        <div style="font-size:0.8rem;line-height:1.4;margin-bottom:0.3rem">${p.text}</div>
+        <span style="font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:10px;background:rgba(255,255,255,0.08);color:${p.color}">${p.risk} RISK</span>
+      </div>
+    </div>`).join('');
+  notify('AI behavioral analysis complete!','success');
+  addCoins(20);
+}
+
+// ======================== WEEK CHART ========================
+function renderWeekChart(){
+  const scores=[68,72,70,78,74,82,78];
+  const colors=['var(--cyan)','var(--cyan)','var(--blue)','var(--cyan)','var(--blue)','var(--green)','var(--cyan)'];
+  const max=Math.max(...scores);
+  document.getElementById('week-chart').innerHTML=scores.map((s,i)=>`
+    <div class="chart-bar" style="height:${(s/max*100)}%;background:${colors[i]};opacity:0.8"></div>`).join('');
+}
+
+// ======================== QUESTS ========================
+function completeQuest(btn,coins){
+  btn.textContent='✅ Done';
+  btn.className='btn btn-ghost btn-sm';
+  btn.onclick=null;
+  addCoins(coins);
+  notify('Quest completed! 🎯','success');
+}
+
+// ======================== INTERVENTIONS ========================
+function renderInterventions(){
+  document.getElementById('interventions').innerHTML=INTERVENTIONS.map(i=>`
+    <div style="display:flex;align-items:flex-start;gap:0.7rem;padding:0.8rem;background:rgba(0,255,200,0.04);border:1px solid rgba(0,255,200,0.1);border-radius:8px">
+      <span style="font-size:1.2rem">${i.icon}</span>
+      <div style="flex:1">
+        <div style="font-size:0.78rem;color:var(--text2);margin-bottom:0.4rem;line-height:1.4">${i.text}</div>
+        <button class="btn btn-primary btn-sm" onclick="addCoins(15);notify('${i.action} activated! +15 🪙','success')">${i.action}</button>
+      </div>
+    </div>`).join('');
+}
+
+// ======================== REAL-TIME SIMULATION ========================
+setInterval(()=>{
+  // gentle drift of values
+  const drift=()=>(Math.random()-0.5)*3;
+  state.craving=Math.max(0,Math.min(100,state.craving+drift()));
+  state.dopamine=Math.max(0,Math.min(100,state.dopamine+drift()));
+  state.cognitive=Math.max(0,Math.min(100,state.cognitive+drift()*0.5));
+  document.getElementById('craving-val').textContent=Math.round(state.craving)+'%';
+  document.getElementById('craving-fill').style.width=Math.round(state.craving)+'%';
+  const cv=document.getElementById('craving-val');
+  cv.style.color=state.craving>70?'var(--red)':state.craving>40?'var(--orange)':'var(--yellow)';
+}, 4000);
+
+// ======================== INIT ========================
+function init(){
+  renderScenarios();
+  renderGutViz();
+  renderWeekChart();
+  renderQuizLB();
+  renderSkillTree();
+  renderLeaderboard('global');
+  renderGuilds();
+  renderAchievements();
+  renderShop();
+  renderBiasCards();
+  renderManipContent();
+  renderInterventions();
+  selectPhase('menstrual');
+  evolveAvatar;
+  // run AI on load
+  setTimeout(runAIAnalysis,500);
+  // initial question
+  renderQuestion();
+  // populate neuroscore sidebar
+  document.getElementById('ns-mini').textContent=state.neuroScore;
+  document.getElementById('sb-brain').style.width='75%';
+  document.getElementById('sb-gut').style.width='60%';
+  document.getElementById('sb-dec').style.width='82%';
+}
+
+init();
+</script>
+</body>
+</html>
